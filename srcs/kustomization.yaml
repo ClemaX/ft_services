@@ -1,0 +1,9 @@
+secretGenerator:
+- name: mysql-pass
+  literals:
+  - password=42
+- name: wordpress-phpmyadmin
+  literals:
+  - blowfish=,3Eet7Gu:O2VRV4GGSf0Wl8JI:iMXwEr
+resources:
+- mysql/deployment.yaml
