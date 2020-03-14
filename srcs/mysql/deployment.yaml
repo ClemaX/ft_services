@@ -55,19 +55,44 @@ spec:
         - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
       initContainers:
-      - image: mysql
+      - image: ft_services/mysql
         imagePullPolicy: Never
         name: init-mysql
         env:
+        - name: MYSQL_WP_DB
+          valueFrom:
+            secretKeyRef:
+              name: mysql-database
+              key: wordpress
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-pass
-              key: password
+              name: mysql-secret
+              key: root-password
+        - name: MYSQL_WP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: wp-username
+        - name: MYSQL_WP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: wp-password
+        - name: MYSQL_PHP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: php-username
+        - name: MYSQL_PHP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: php-password
         volumeMounts:
         - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
-        command: ['/usr/bin/mysqld_safe', '--skip-networking', '&', 'mysqladmin', '-w15', '-u', 'root', 'password', "$MYSQL_ROOT_PASSWORD"]
+        command: ['sh', 'init.sh']
       volumes:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
