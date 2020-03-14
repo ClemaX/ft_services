@@ -1,7 +1,14 @@
 secretGenerator:
-- name: mysql-pass
+- name: mysql-database
   literals:
-  - password=42
+  - wordpress=wordpress
+- name: mysql-secret
+  literals:
+  - root-password=42root
+  - php-username=admin
+  - php-password=42php
+  - wp-username=wordpress
+  - wp-password=42wp
 - name: wordpress-phpmyadmin
   literals:
   - blowfish=,3Eet7Gu:O2VRV4GGSf0Wl8JI:iMXwEr
