@@ -12,7 +12,7 @@ ENV PHP_ERROR_REPORTING="E_COMPILE_ERROR\|E_RECOVERABLE_ERROR\|E_ERROR\|E_CORE_E
 ENV PHP_CGI_FIX_PATHINFO=0
 
 # Install Packages
-RUN apk add --update --no-cache nginx php7-fpm php7-mysql php7-mbstring
+RUN apk add --update --no-cache nginx php7-fpm php7-mysqli php7-mbstring
 
 # Setup WWW user
 RUN adduser -D -G$WWW_USER $WWW_USER\
