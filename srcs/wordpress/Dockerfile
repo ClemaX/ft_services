@@ -1,6 +1,8 @@
 FROM alpine
 
 ENV WWW_USER=www-data
+ENV WWW_DIR=/var/www/wordpress
+
 ENV PHP_FPM_LISTEN_MODE="0660"
 ENV PHP_MEMORY_LIMIT="512M"
 ENV PHP_MAX_UPLOAD="50M"
@@ -16,8 +18,8 @@ RUN apk add --update --no-cache nginx php7-fpm php7-mysqli php7-mbstring
 
 # Setup WWW user
 RUN adduser -D -G$WWW_USER $WWW_USER\
-	&& mkdir -p /var/www/wordpress\
-	&& chown -R $WWW_USER:$WWW_USER /var/www/wordpress\
+	&& mkdir -p $WWW_DIR\
+	&& chown -R $WWW_USER:$WWW_USER $WWW_DIR\
 	&& chown -R $WWW_USER:$WWW_USER /var/lib/nginx
 
 # Setup Nginx config
@@ -36,8 +38,8 @@ RUN sed -i /etc/php7/php-fpm.d/www.conf -e "s|;listen.owner\s*=\s*nobody|listen.
 # Setup wordpress
 RUN wget -qO /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz
 RUN cd /tmp && tar xzf wordpress.tar.gz && rm -f wordpress.tar.gz\
-	&& mv wordpress/* /var/www/wordpress/ && rmdir wordpress
-RUN cd /var/www/html\
+	&& mv wordpress/* $WWW_DIR && rmdir wordpress
+RUN cd $WWW_DIR\
 	&& sed -e "s/database_name_here/${mysql_wp_db}/"\
 	-e "s/username_here/${mysql_wp_user}/"\
 	-e "s/password_here/${mysql_wp_pw}/" wp-config-sample.php > wp-config.php
