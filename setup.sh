@@ -7,7 +7,9 @@ SRCDIR=srcs
 # Start minikube
 minikube start --driver=$DRIVER
 
-# Enable ingress
+# Enable addons
+minikube addons enable metrics-server
+minikube addons enable dashboard
 minikube addons enable ingress
 
 # Use minikube docker-env
@@ -19,3 +21,6 @@ docker build -t $PREFIX/wordpress $SRCDIR/wordpress
 
 # Apply kustomization
 kubectl apply -k $SRCDIR
+
+# Show web dashboard url
+minikube dashboard --url
