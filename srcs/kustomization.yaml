@@ -13,4 +13,6 @@ secretGenerator:
   literals:
   - blowfish=,3Eet7Gu:O2VRV4GGSf0Wl8JI:iMXwEr
 resources:
+- ingress-controller.yaml
 - mysql/deployment.yaml
+- wordpress/deployment.yaml
