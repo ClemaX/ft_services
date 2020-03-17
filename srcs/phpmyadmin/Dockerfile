@@ -3,6 +3,8 @@ FROM alpine
 ARG phpmyadmin_version="5.0.1"
 
 ENV WWW_USER=www-data
+ENV WWW_DIR=/var/www/phpmyadmin
+
 ENV PHP_FPM_LISTEN_MODE="0660"
 ENV PHP_MEMORY_LIMIT="512M"
 ENV PHP_MAX_UPLOAD="50M"
@@ -17,10 +19,10 @@ ENV PHP_CGI_FIX_PATHINFO=0
 RUN apk add --update --no-cache nginx php7-fpm php7-mysql php7-mbstring
 
 # Setup WWW user
-RUN adduser -D -G$WWW_USER $WWW_USER\
-	&& mkdir -p /var/www/phpmyadmin\
-	&& chown -R $WWW_USER:$WWW_USER /var/www/phpmyadmin\
-	&& chown -R $WWW_USER:$WWW_USER /var/lib/nginx
+RUN adduser -D -G${WWW_USER} ${WWW_USER}\
+	&& mkdir -p ${WWW_DIR}\
+	&& chown -R ${WWW_USER}:${WWW_USER} ${WWW_DIR}\
+	&& chown -R ${WWW_USER}:${WWW_USER} /var/lib/nginx
 
 # Setup Nginx config
 RUN rm /etc/nginx/conf.d/default.conf
@@ -40,7 +42,7 @@ RUN wget -qO /tmp/phpmyadmin.zip https://files.phpmyadmin.net/phpMyAdmin/${phpmy
 RUN cd /tmp && unzip phpmyadmin.zip && rm -f phpmyadmin.zip\
 	&& mv phpMyAdmin-${phpmyadmin_version}-all-languages /usr/share/phpmyadmin\
 	&& chown -R www-data:www-data /usr/share/phpmyadmin\
-	&& ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
+	&& ln -s /usr/share/phpmyadmin ${WWW_DIR}
 RUN cd /usr/share/phpmyadmin\
 	&& sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '${BLOWFISH}'|" config.sample.inc.php > config.inc.php
 
