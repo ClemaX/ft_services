@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 5050
+  selector:
+    app: wordpress
+    tier: frontend
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wp-pv
+  labels:
+    type: local
+spec:
+  storageClassName: test
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/wp"
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-pv-claim
+  labels:
+    app: wordpress
+spec:
+  storageClassName: test
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:
+      - image: ft_services/wordpress
+        imagePullPolicy: Never
+        name: wordpress
+        env:
+        - name: MYSQL_HOST
+          value: wordpress-mysql
+        - name: MYSQL_WP_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-database
+              key: wordpress
+        - name: MYSQL_WP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: wp-username
+        - name: MYSQL_WP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: wp-password
+        ports:
+        - containerPort: 5050
+          name: wordpress
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/wordpress
+      initContainers:
+      - image: ft_services/wordpress
+        imagePullPolicy: Never
+        name: init-wordpress
+        env:
+        - name: MYSQL_HOST
+          value: wordpress-mysql
+        - name: MYSQL_WP_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-database
+              key: wordpress
+        - name: MYSQL_WP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: wp-username
+        - name: MYSQL_WP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: wp-password
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/wordpress
+        command: ['/bin/sh']
+        args: ['/init.sh']
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wp-pv-claim
