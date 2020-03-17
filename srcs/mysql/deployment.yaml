@@ -59,7 +59,7 @@ spec:
         imagePullPolicy: Never
         name: init-mysql
         env:
-        - name: MYSQL_WP_DB
+        - name: MYSQL_WP_DATABASE
           valueFrom:
             secretKeyRef:
               name: mysql-database
