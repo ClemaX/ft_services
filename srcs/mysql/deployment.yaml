@@ -92,7 +92,8 @@ spec:
         volumeMounts:
         - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
-        command: ['sh', 'init.sh']
+        command: ['/bin/sh']
+        args: ['/init.sh']
       volumes:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
