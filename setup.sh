@@ -18,6 +18,7 @@ eval $(minikube docker-env)
 # Build docker images
 docker build -t $PREFIX/mysql $SRCDIR/mysql
 docker build -t $PREFIX/wordpress $SRCDIR/wordpress
+docker build -t $PREFIX/phpmyadmin $SRCDIR/phpmyadmin
 
 # Apply kustomization
 kubectl apply -k $SRCDIR
