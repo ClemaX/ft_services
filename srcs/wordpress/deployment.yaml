@@ -64,24 +64,6 @@ spec:
       - image: ft_services/wordpress
         imagePullPolicy: Never
         name: wordpress
-        env:
-        - name: MYSQL_HOST
-          value: wordpress-mysql
-        - name: MYSQL_WP_DATABASE
-          valueFrom:
-            secretKeyRef:
-              name: mysql-database
-              key: wordpress
-        - name: MYSQL_WP_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: wp-username
-        - name: MYSQL_WP_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: wp-password
         ports:
         - containerPort: 5050
           name: wordpress
