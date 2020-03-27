@@ -11,6 +11,36 @@ spec:
     app: wordpress
     tier: frontend
 ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: php-pv
+  labels:
+    type: local
+spec:
+  storageClassName: test
+  capacity:
+    storage: 128Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/php"
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: php-pv-claim
+  labels:
+    app: wordpress
+spec:
+  storageClassName: test
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 128Mi
+---
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -34,9 +64,25 @@ spec:
       - image: ft_services/phpmyadmin
         imagePullPolicy: Never
         name: phpmyadmin
-        env:
-        - name: MYSQL_HOST
-          value: mysql
         ports:
         - containerPort: 5000
           name: phpmyadmin
+        volumeMounts:
+        - name: phpmyadmin-persistent-storage
+          mountPath: /usr/share/phpmyadmin
+      initContainers:
+      - image: ft_services/phpmyadmin
+        imagePullPolicy: Never
+        name: init-phpmyadmin
+        env:
+        - name: MYSQL_HOST
+          value: wordpress-mysql
+        volumeMounts:
+        - name: phpmyadmin-persistent-storage
+          mountPath: /usr/share/phpmyadmin
+        command: ['/bin/sh']
+        args: ['/init.sh']
+      volumes:
+        - name: phpmyadmin-persistent-storage
+          persistentVolumeClaim:
+            claimName: php-pv-claim
