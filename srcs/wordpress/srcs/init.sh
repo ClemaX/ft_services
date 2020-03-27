@@ -1,31 +1,41 @@
 #!/bin/sh
 
-WWW_USER=www-data
-WWW_DIR=/var/www/wordpress
+# Fix for ivconv on alpine
+export LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 
 # Abort on error
 set -e
 
-# Check if wordpress is installed
-if [ -d ${WWW_DIR}/wp-admin ]; then
-	echo "Already initialized."
-else
-	echo "Initializing..."
-	# Setup wordpress
-	cd /tmp
-	wget -qO wordpress.tar.gz https://wordpress.org/latest.tar.gz
-	tar xzf wordpress.tar.gz
-	rm -f wordpress.tar.gz
-	mkdir -p ${WWW_DIR}
-	mv wordpress/* ${WWW_DIR}
-	rmdir wordpress
-	chown -R ${WWW_USER}:${WWW_USER} ${WWW_DIR}
-	cd ${WWW_DIR}
+download_wordpress()
+{
+	echo "Downloading wordpress..."
+	wp --path=${WWW_DIR} core download --locale=${WP_LOCALE}
+	cp ${WWW_DIR}/wp-config-sample.php ${WWW_DIR}/wp-config.php
+}
 
-	sed -e "s/database_name_here/${MYSQL_WP_DATABASE}/"\
-	-e "s/username_here/${MYSQL_WP_USERNAME}/"\
-	-e "s/password_here/${MYSQL_WP_PASSWORD}/"\
-	-e "s/localhost/${MYSQL_HOST}/"\
-	wp-config-sample.php > wp-config.php
-	echo "Done!"
-fi
+config_wordpress()
+{
+	echo "Configuring wordpress..."
+	wp --path=${WWW_DIR} config set DB_NAME ${MYSQL_WP_DATABASE}
+	wp --path=${WWW_DIR} config set DB_USER ${MYSQL_WP_USERNAME}
+	wp --path=${WWW_DIR} config set DB_PASSWORD ${MYSQL_WP_PASSWORD} --quiet
+	wp --path=${WWW_DIR} config set DB_HOST ${MYSQL_HOST}
+}
+
+install_wordpress() {
+	echo "Installing wordpress..."
+	wp core install\
+		--path=${WWW_DIR}\
+		--url=${WP_URL}\
+		--title=${WP_TITLE}\
+		--admin_user=${WP_ADMIN_USERNAME}\
+		--admin_password=${WP_ADMIN_PASSWORD}\
+		--admin_email=${WP_ADMIN_EMAIL}
+}
+
+wp --path=${WWW_DIR} core is-installed\
+	&& config_wordpress\
+	|| download_wordpress && config_wordpress && install_wordpress
+
+chown -R ${WWW_USER}:${WWW_USER} ${WWW_DIR}
+echo "Done!"

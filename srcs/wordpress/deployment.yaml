@@ -93,6 +93,12 @@ spec:
         imagePullPolicy: Never
         name: init-wordpress
         env:
+        - name: WP_URL
+          value: http://wordpress.ft.services/
+        - name: WP_TITLE
+          value: ft_services
+        - name: WP_LOCALE
+          value: en_US
         - name: MYSQL_HOST
           value: wordpress-mysql
         - name: MYSQL_WP_DATABASE
@@ -110,6 +116,21 @@ spec:
             secretKeyRef:
               name: mysql-secret
               key: wp-password
+        - name: WP_ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: admin-username
+        - name: WP_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: admin-password
+        - name: WP_ADMIN_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: admin-email
         volumeMounts:
         - name: wordpress-persistent-storage
           mountPath: /var/www/wordpress

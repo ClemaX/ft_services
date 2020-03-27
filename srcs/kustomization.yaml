@@ -9,6 +9,11 @@ secretGenerator:
   - php-password=42php
   - wp-username=wordpress
   - wp-password=42wp
+- name: wordpress-secret
+  literals:
+    - admin-username=admin
+    - admin-password=42wp
+    - admin-email=admin@ft.services
 - name: wordpress-phpmyadmin
   literals:
   - blowfish=,3Eet7Gu:O2VRV4GGSf0Wl8JI:iMXwEr
