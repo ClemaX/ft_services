@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ftp
+spec:
+  ports:
+    - port: 21
+  selector:
+    tier: ftp
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ftp-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/ftp"
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ftp-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: ftp
+spec:
+  selector:
+    matchLabels:
+      tier: ftp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: ftp
+    spec:
+      containers:
+      - image: ft_services/ftps
+        imagePullPolicy: Never
+        name: ftps
+        ports:
+        - containerPort: 21
+          name: ftp
+        volumeMounts:
+        - name: ftp-persistent-storage
+          mountPath: /var/ftp
+      initContainers:
+      - image: ft_services/ftps
+        imagePullPolicy: Never
+        name: init-ftps
+        env:
+        - name: FTP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: ftp-secret
+              key: username
+        - name: FTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ftp-secret
+              key: password
+        volumeMounts:
+        - name: ftp-persistent-storage
+          mountPath: /var/ftp
+        command: ['/bin/sh']
+        args: ['/init.sh']
+      volumes:
+      - name: ftp-persistent-storage
+        persistentVolumeClaim:
+          claimName: ftp-pv-claim

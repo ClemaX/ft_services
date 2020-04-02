@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DRIVER=virtualbox
+DRIVER=kvm2
 PREFIX=ft_services
 SRCDIR=srcs
 
@@ -19,6 +19,7 @@ eval $(minikube docker-env)
 docker build -t $PREFIX/mysql $SRCDIR/mysql
 docker build -t $PREFIX/wordpress $SRCDIR/wordpress
 docker build -t $PREFIX/phpmyadmin $SRCDIR/phpmyadmin
+docker build -t $PREFIX/ftps $SRCDIR/ftps
 
 # Apply kustomization
 kubectl apply -k $SRCDIR

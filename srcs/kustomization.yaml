@@ -14,8 +14,13 @@ secretGenerator:
     - admin-username=admin
     - admin-password=42wp
     - admin-email=admin@ft.services
+- name: ftp-secret
+  literals:
+    - username=admin
+    - password=42ftp
 resources:
 - ingress-controller.yaml
 - mysql/deployment.yaml
 - wordpress/deployment.yaml
 - phpmyadmin/deployment.yaml
+- ftps/deployment.yaml
