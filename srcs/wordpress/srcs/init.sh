@@ -5,6 +5,7 @@ export LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 
 # Abort on error
 set -e
+set -o pipefail
 
 download_wordpress()
 {
