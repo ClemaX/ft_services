@@ -5,7 +5,7 @@ PREFIX=ft_services
 SRCDIR=srcs
 
 # Start minikube
-minikube start --driver=$DRIVER
+minikube start --driver=${DRIVER}
 
 # Enable addons
 minikube addons enable metrics-server
@@ -16,13 +16,13 @@ minikube addons enable ingress
 eval $(minikube docker-env)
 
 # Build docker images
-docker build -t $PREFIX/mysql $SRCDIR/mysql
-docker build -t $PREFIX/wordpress $SRCDIR/wordpress
-docker build -t $PREFIX/phpmyadmin $SRCDIR/phpmyadmin
-docker build -t $PREFIX/ftps $SRCDIR/ftps
+docker build -t ${PREFIX}/mysql ${SRCDIR}/mysql
+docker build -t ${PREFIX}/wordpress ${SRCDIR}/wordpress
+docker build -t ${PREFIX}/phpmyadmin ${SRCDIR}/phpmyadmin
+docker build -t ${PREFIX}/ftps ${SRCDIR}/ftps
 
 # Apply kustomization
-kubectl apply -k $SRCDIR
+kubectl apply -k ${SRCDIR}
 
 # Show web dashboard url
 minikube dashboard --url
