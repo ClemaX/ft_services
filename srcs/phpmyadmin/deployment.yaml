@@ -21,7 +21,7 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: test
+  storageClassName: manual
   capacity:
     storage: 128Mi
   accessModes:
@@ -37,7 +37,7 @@ metadata:
   labels:
     app: wordpress
 spec:
-  storageClassName: test
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
