@@ -14,6 +14,9 @@ secretGenerator:
     - admin-username=admin
     - admin-password=42wp
     - admin-email=admin@ft.services
+- name: nginx-ssh-secret
+  literals:
+    - password=42nginx # Username is www-data
 - name: ftp-secret
   literals:
     - username=admin
@@ -23,4 +26,5 @@ resources:
 - mysql/deployment.yaml
 - wordpress/deployment.yaml
 - phpmyadmin/deployment.yaml
+- nginx/deployment.yaml
 - ftps/deployment.yaml

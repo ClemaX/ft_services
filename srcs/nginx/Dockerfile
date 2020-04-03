@@ -1,8 +1,25 @@
 FROM alpine
 
-# Install Nginx
-RUN apk add --update --no-cache nginx
-# Setup Nginx config
-COPY srcs/nginx.conf /etc/nginx/conf.d/default.conf
+ENV WWW_USER=www-data
+ENV WWW_DIR=/var/www/localhost
 
-EXPOSE 80 443
+# Install dependencies
+RUN apk add --update --no-cache nginx openssh
+
+# Setup WWW user with home at WWW dir
+RUN adduser -D -h${WWW_DIR} -G${WWW_USER} ${WWW_USER}\
+	&& chown -R ${WWW_USER}:${WWW_USER} /var/lib/nginx
+
+# Setup Nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+COPY srcs/nginx/localhost.conf /etc/nginx/conf.d/localhost.conf
+COPY srcs/nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Generate SSH host keys
+RUN ssh-keygen -A
+
+COPY srcs/init.sh /init.sh
+
+EXPOSE 80 22
+
+CMD sh init.sh && /usr/sbin/sshd && nginx
