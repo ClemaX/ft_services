@@ -3,18 +3,15 @@ kind: Ingress
 metadata:
   name: ingress-controller
 spec:
+  tls:
+  - hosts:
+    - ft.services
+    secretName: ft.services-tls
   rules:
-  - host: wordpress.ft.services
+  - host: ft.services
     http:
       paths:
       - path: /
         backend:
-          serviceName: wordpress
-          servicePort: 5050
-  - host: phpmyadmin.ft.services
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: phpmyadmin
-          servicePort: 5000
+          serviceName: nginx
+          servicePort: 80
