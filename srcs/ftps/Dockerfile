@@ -7,8 +7,10 @@ RUN apk add --update --no-cache vsftpd
 
 # Setup configuration files
 COPY srcs/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf
-RUN touch /etc/vsftpd/chroot_list
+RUN touch /etc/vsftpd/chroot_list && touch /var/log/vsftpd.log
 
 COPY srcs/init.sh /init.sh
 
-CMD vsftpd
+EXPOSE 21 30020
+
+CMD sh init.sh && vsftpd /etc/vsftpd/vsftpd.conf

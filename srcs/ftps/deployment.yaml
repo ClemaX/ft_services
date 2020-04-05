@@ -3,11 +3,16 @@ kind: Service
 metadata:
   name: ftp
 spec:
+  type: NodePort
   ports:
-    - port: 21
+    - name: ftp-data
+      port: 30020
+      nodePort: 30020
+    - name: ftp-cmd
+      port: 21
+      nodePort: 30021
   selector:
     tier: ftp
-  clusterIP: None
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -56,16 +61,6 @@ spec:
       - image: ft_services/ftps
         imagePullPolicy: Never
         name: ftps
-        ports:
-        - containerPort: 21
-          name: ftp
-        volumeMounts:
-        - name: ftp-persistent-storage
-          mountPath: /var/ftp
-      initContainers:
-      - image: ft_services/ftps
-        imagePullPolicy: Never
-        name: init-ftps
         env:
         - name: FTP_USERNAME
           valueFrom:
@@ -77,12 +72,21 @@ spec:
             secretKeyRef:
               name: ftp-secret
               key: password
+        ports:
+        - containerPort: 30020
+          name: ftp-data
+        - containerPort: 21
+          name: ftp-cmd
         volumeMounts:
         - name: ftp-persistent-storage
           mountPath: /var/ftp
-        command: ['/bin/sh']
-        args: ['/init.sh']
+        - name: ftp-tls
+          mountPath: /etc/vsftpd/tls
+          readOnly: true
       volumes:
       - name: ftp-persistent-storage
         persistentVolumeClaim:
           claimName: ftp-pv-claim
+      - name: ftp-tls
+        secret:
+          secretName: ft.services-tls

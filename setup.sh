@@ -25,7 +25,7 @@ docker build -t ${PREFIX}/phpmyadmin ${SRCDIR}/phpmyadmin
 docker build -t ${PREFIX}/nginx ${SRCDIR}/nginx
 docker build -t ${PREFIX}/ftps ${SRCDIR}/ftps
 
-# Generate TLS keys for ingress
+# Generate TLS keys
 mkdir -p ${KEYDIR}
 
 openssl req -x509 -nodes -days 365\
