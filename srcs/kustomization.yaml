@@ -21,6 +21,13 @@ secretGenerator:
   literals:
     - username=admin
     - password=42ftp
+- name: influxdb-secret
+    - database=monitoring
+    - username=admin
+    - password=42influx
+- name: grafana-secret
+    - username=admin
+    - password=42grafana
 resources:
 - ingress-controller.yaml
 - mysql/deployment.yaml

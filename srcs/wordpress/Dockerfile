@@ -18,7 +18,7 @@ RUN apk add --update --no-cache nginx php7 php7-fpm php7-json php7-zlib php7-xml
 	php7-pdo php7-phar php7-openssl php7-pdo_mysql php7-mysqli php7-mysqlnd\
 	php7-gd php7-mcrypt php7-curl php7-opcache php7-ctype php7-intl php7-bcmath\
 	php7-dom php7-xmlreader php7-tokenizer php7-iconv\
-	&& apk add gnu-libiconv --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted
+	&& apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted gnu-libiconv 
 
 # Install wp-cli
 RUN wget -qO /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x /usr/local/bin/wp
