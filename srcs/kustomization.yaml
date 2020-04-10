@@ -1,37 +1,43 @@
 secretGenerator:
-- name: mysql-database
-  literals:
-  - wordpress=wordpress
-- name: mysql-secret
-  literals:
-  - root-password=42root
-  - php-username=admin
-  - php-password=42php
-  - wp-username=wordpress
-  - wp-password=42wp
-- name: wordpress-secret
-  literals:
-    - admin-username=admin
-    - admin-password=42wp
-    - admin-email=admin@ft.services
-- name: nginx-ssh-secret
-  literals:
-    - password=42nginx # Username is www-data
-- name: ftp-secret
-  literals:
-    - username=admin
-    - password=42ftp
-- name: influxdb-secret
-    - database=monitoring
-    - username=admin
-    - password=42influx
-- name: grafana-secret
-    - username=admin
-    - password=42grafana
+  - name: mysql-database
+    literals:
+      - wordpress=wordpress
+  - name: mysql-secret
+    literals:
+      - root-password=42root
+      - php-username=admin
+      - php-password=42php
+      - wp-username=wordpress
+      - wp-password=42wp
+  - name: wordpress-secret
+    literals:
+      - admin-username=admin
+      - admin-password=42wp
+      - admin-email=admin@ft.services
+  - name: nginx-ssh-secret
+    literals:
+      - username=www-data
+      - password=42nginx
+  - name: ftp-secret
+    literals:
+      - username=admin
+      - password=42ftp
+  - name: influxdb-database
+      - monitoring=monitoring
+  - name: influxdb-secret
+      - admin-username=admin
+      - admin-password=42influx
+      - telegraf-username=telegraf
+      - telegraf-password=42telegraf
+      - grafana-username=grafana
+      - grafana-password=42grafana
+  - name: grafana-secret
+      - username=admin
+      - password=42grafana
 resources:
-- ingress-controller.yaml
-- mysql/deployment.yaml
-- wordpress/deployment.yaml
-- phpmyadmin/deployment.yaml
-- nginx/deployment.yaml
-- ftps/deployment.yaml
+  - ingress-controller.yaml
+  - mysql/deployment.yaml
+  - wordpress/deployment.yaml
+  - phpmyadmin/deployment.yaml
+  - nginx/deployment.yaml
+  - ftps/deployment.yaml

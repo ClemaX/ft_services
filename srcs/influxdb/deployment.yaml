@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb
+  labels:
+    app: influxdb
+spec:
+  ports:
+    - port: 8086
+  selector:
+    app: influxdb
+    tier: database
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: influxdb-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/influxdb"
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: influxdb-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: monitoring
+  name: influxdb
+spec:
+  selector:
+    matchLabels:
+      app: influxdb
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: influxdb
+        tier: database
+    spec:
+      containers:
+        - name: influxdb
+          image: ft_services/influxdb
+          imagePullPolicy: Never
+          env:
+            - name: INFLUXDB_META_DIR
+              value: /var/lib/influxdb/meta
+            - name: INFLUXDB_DATA_DIR
+              value: /var/lib/influxdb/data
+            - name: INFLUXDB_DATA_WAL_DIR
+              value: /var/lib/influxdb/wal
+          volumeMounts:
+            - name: influxdb-persistent-storage
+              mountPath: /var/lib/influxdb
+          ports:
+            - name: influxdb
+              containerPort: 8086
+      initContainers:
+        - name: init-influxdb
+          image: ft_services/influxdb
+          imagePullPolicy: Never
+          env:
+            - name: INFLUXDB_META_DIR
+              value: /var/lib/influxdb/meta
+            - name: INFLUXDB_DATA_DIR
+              value: /var/lib/influxdb/data
+            - name: INFLUXDB_DATA_WAL_DIR
+              value: /var/lib/influxdb/wal
+            - name: INFLUXDB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-database
+                  key: monitoring
+            - name: INFLUXDB_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: admin-username
+            - name: INFLUXDB_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: admin-password
+            - name: INFLUXDB_TELEGRAF_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: telegraf-username
+            - name: INFLUXDB_TELEGRAF_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: telegraf-password
+            - name: INFLUXDB_GRAFANA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: grafana-username
+            - name: INFLUXDB_GRAFANA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: grafana-password
+          volumeMounts:
+            - name: influxdb-persistent-storage
+              mountPath: /var/lib/influxdb
+          command: ['/bin/sh']
+          args: ['/init.sh']
+      volumes:
+        - name: influxdb-persistent-storage
+          persistentVolumeClaim:
+            claimName: influxdb-pv-claim

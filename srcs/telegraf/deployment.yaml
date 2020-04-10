@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  namespace: monitoring
+  name: telegraf
+  labels:
+    app: telegraf
+spec:
+  selector:
+    name: telegraf
+    app: telegraf
+  template:
+    metadata:
+      labels:
+        name: telegraf
+        app: telegraf
+    spec:
+      containers:
+      - name: telegraf
+        image: ft_service/telegraf
+        resources:
+          limits:
+            memory: "500Mi"
+          requests:
+            cpu: "500m"
+            memory: "500Mi"
+        env:
+          - name: INFLUXDB_URL
+            value: http://influxdb:8086
+          - name: INFLUXDB_DATABASE
+            valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: database
+          - name: INFLUXDB_USERNAME
+            valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: username
+          - name: INFLUXDB_PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: password
+        volumeMounts:
+          - name: sys
+            mountPath: /rootfs/sys
+            readOnly: true
+          - name: docker
+            mountPath: /var/run/docker.sock
+            readOnly: true
+          - name: proc
+            mountPath: /rootfs/proc
+            readOnly: true
+          - name: utmp
+            mountPath: /var/run/utmp
+            readOnly: true
+      volumes:
+        - name: sys
+          hostPath:
+              path: /sys
+        - name: docker
+          hostPath:
+              path: /var/run/docker.sock
+        - name: proc
+          hostPath:
+              path: /proc
+        - name: utmp
+          hostPath:
+              path: /var/run/utmp

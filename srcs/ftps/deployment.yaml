@@ -73,10 +73,10 @@ spec:
               name: ftp-secret
               key: password
         ports:
-        - containerPort: 30020
-          name: ftp-data
-        - containerPort: 21
-          name: ftp-cmd
+        - name: ftp-data
+          containerPort: 30020
+        - name: ftp-cmd
+          containerPort: 21
         volumeMounts:
         - name: ftp-persistent-storage
           mountPath: /var/ftp
