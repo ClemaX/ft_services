@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-DRIVER=kvm2         # Driver to use with minikube
+set -e              # Abort on error
+
+DRIVER=${DRIVER:-virtualbox} # Driver to use with minikube
 PREFIX=ft_services  # Docker build prefix
 SRCDIR=srcs         # Directory which contains the deployments
 
