@@ -23,8 +23,10 @@ secretGenerator:
       - username=admin
       - password=42ftp
   - name: influxdb-database
+    literals:
       - monitoring=monitoring
   - name: influxdb-secret
+    literals:
       - admin-username=admin
       - admin-password=42influx
       - telegraf-username=telegraf
@@ -32,6 +34,7 @@ secretGenerator:
       - grafana-username=grafana
       - grafana-password=42grafana
   - name: grafana-secret
+    literals:
       - username=admin
       - password=42grafana
 resources:
