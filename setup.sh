@@ -94,6 +94,7 @@ delete()
 {
 	# Delete the minikube cluster
 	minikube delete
+	rm -rf keys/
 }
 
 if [ "$1" = "start" ]; then
