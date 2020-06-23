@@ -30,6 +30,9 @@ spec:
   hostPath:
     path: "/mnt/wp"
   persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    namespace: default
+    name: wp-pv-claim
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -44,6 +47,7 @@ spec:
   resources:
     requests:
       storage: 2Gi
+  volumeName: wp-pv
 ---
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment

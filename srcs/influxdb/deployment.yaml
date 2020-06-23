@@ -27,6 +27,9 @@ spec:
   hostPath:
     path: "/mnt/influxdb"
   persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    namespace: default
+    name: influxdb-pv-claim
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -39,6 +42,7 @@ spec:
   resources:
     requests:
       storage: 2Gi
+  volumeName: influxdb-pv
 ---
 apiVersion: apps/v1
 kind: Deployment
