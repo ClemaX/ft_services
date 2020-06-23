@@ -9,38 +9,97 @@ SRCDIR=srcs         # Directory which contains the deployments
 KEYDIR=keys         # Directory where keys and certs will be generated
 KEYHOST=ft.services # Load balancer hostname
 
-# Start minikube
-minikube start --driver=${DRIVER}
+# Container units
+UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps")
 
-# Enable addons
-minikube addons enable metrics-server
-minikube addons enable dashboard
-minikube addons enable ingress
+setup_minikube()
+{
+	# Start minikube
+	minikube start --driver=${DRIVER}
 
-# Use minikube docker-env
-eval $(minikube docker-env)
+	# Enable addons
+	minikube addons enable metrics-server
+	minikube addons enable dashboard
+	minikube addons enable ingress
+}
 
-# Build docker images
-docker build -t ${PREFIX}/mysql ${SRCDIR}/mysql
-docker build -t ${PREFIX}/wordpress ${SRCDIR}/wordpress
-docker build -t ${PREFIX}/phpmyadmin ${SRCDIR}/phpmyadmin
-docker build -t ${PREFIX}/nginx ${SRCDIR}/nginx
-docker build -t ${PREFIX}/ftps ${SRCDIR}/ftps
+setup_wait()
+{
+	# Wait for ingress controller
+	kubectl wait --namespace kube-system \
+		--for=condition=ready pod \
+		--selector=app.kubernetes.io/component=controller \
+		--timeout=-1s
+}
 
-# Generate TLS keys
-mkdir -p ${KEYDIR}
+build_units()
+{
+	# Use minikube docker-env
+	eval $(minikube docker-env)
 
-openssl req -x509 -nodes -days 365\
-    -newkey rsa:2048\
-    -keyout ${KEYDIR}/${KEYHOST}.key\
-    -out ${KEYDIR}/${KEYHOST}.csr\
-    -subj "/CN=${KEYHOST}/O=${KEYHOST}"
+	# Build docker images
+	for UNIT in ${UNITS[@]}; do
+		docker build -t ${PREFIX}/${UNIT} ${SRCDIR}/${UNIT}
+	done
+}
 
-kubectl delete secret ${KEYHOST}-tls
-kubectl create secret tls ${KEYHOST}-tls --key ${KEYDIR}/${KEYHOST}.key --cert ${KEYDIR}/${KEYHOST}.csr
+build_certs()
+{
+	# Generate TLS keys
+	mkdir -p ${KEYDIR}
 
-# Apply kustomization
-kubectl apply -k ${SRCDIR}
+	openssl req -x509 -nodes -days 365\
+		-newkey rsa:2048\
+		-keyout ${KEYDIR}/${KEYHOST}.key\
+		-out ${KEYDIR}/${KEYHOST}.csr\
+		-subj "/CN=${KEYHOST}/O=${KEYHOST}"
 
-# Show web dashboard url
-minikube dashboard --url
+	kubectl delete secret ${KEYHOST}-tls || :
+	kubectl create secret tls ${KEYHOST}-tls --key ${KEYDIR}/${KEYHOST}.key --cert ${KEYDIR}/${KEYHOST}.csr
+}
+
+setup()
+{
+	setup_minikube
+	build_units
+	build_certs
+	setup_wait
+}
+
+start()
+{
+	# Start minikube
+	setup_minikube
+	setup_wait
+
+	# Apply kustomization
+	kubectl apply -k ${SRCDIR}
+
+	# Show web dashboard url
+	minikube dashboard --url
+}
+
+stop()
+{
+	# Stop minikube
+	minikube stop
+}
+
+delete()
+{
+	minikube delete
+}
+
+if [ "$1" = "start" ]; then
+	start
+elif [ "$1" = "stop" ]; then
+	stop
+elif [ "$1" = "restart" ]; then
+	stop
+	start
+elif [ "$1" = "delete" ]; then
+	delete
+else
+	setup
+	start
+fi
