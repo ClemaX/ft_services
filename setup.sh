@@ -32,6 +32,12 @@ setup_wait()
 		--timeout=-1s
 }
 
+start_dashboard()
+{
+	# Show web dashboard url
+	minikube dashboard --url
+}
+
 build_units()
 {
 	# Use minikube docker-env
@@ -75,8 +81,7 @@ start()
 	# Apply kustomization
 	kubectl apply -k ${SRCDIR}
 
-	# Show web dashboard url
-	minikube dashboard --url
+	start_dashboard
 }
 
 stop()
@@ -87,6 +92,7 @@ stop()
 
 delete()
 {
+	# Delete the minikube cluster
 	minikube delete
 }
 
@@ -99,6 +105,8 @@ elif [ "$1" = "restart" ]; then
 	start
 elif [ "$1" = "delete" ]; then
 	delete
+elif [ "$1" = "dashboard" ]; then
+	start_dashboard
 else
 	setup
 	start
