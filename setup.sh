@@ -97,6 +97,22 @@ delete()
 	rm -rf keys/
 }
 
+print_help()
+{
+	echo -e "Usage: $0 [COMMAND]
+
+Commands:
+	setup		Setup and start the cluster
+	start		Start an existing cluster and apply changes
+	stop		Stop the running cluster
+	restart		Restart the running cluster
+	delete		Delete the cluster
+	dashboard	Show the Kubernetes dashboard
+	help		Show this help message
+
+If no argument is provided, 'setup' will be assumed."
+}
+
 if [ "$1" = "start" ]; then
 	start
 elif [ "$1" = "stop" ]; then
@@ -108,7 +124,9 @@ elif [ "$1" = "delete" ]; then
 	delete
 elif [ "$1" = "dashboard" ]; then
 	start_dashboard
-else
+elif [ "$1" = "setup" ] || [ "$1" = "" ]; then
 	setup
 	start
+else
+	print_help
 fi
