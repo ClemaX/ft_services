@@ -113,20 +113,12 @@ Commands:
 If no argument is provided, 'setup' will be assumed."
 }
 
-if [ "$1" = "start" ]; then
-	start
-elif [ "$1" = "stop" ]; then
-	stop
-elif [ "$1" = "restart" ]; then
-	stop
-	start
-elif [ "$1" = "delete" ]; then
-	delete
-elif [ "$1" = "dashboard" ]; then
-	start_dashboard
-elif [ "$1" = "setup" ] || [ "$1" = "" ]; then
-	setup
-	start
-else
-	print_help
-fi
+case "$1" in 
+  "start"		)	start;;
+  "stop"		)	stop;;
+  "restart"		)	stop; start;;
+  "delete"		)	delete;;
+  "dashboard"	)	start_dashboard;;
+  "setup" | ""	)	setup; start;;
+  * 			)	print_help;;
+esac
