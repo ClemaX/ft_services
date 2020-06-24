@@ -5,21 +5,23 @@ Deploying containerized services using Kubernetes.
 This project uses `minikube` to provide a local K8 environment, as well as `kubectl` to administrate the cluster.
 
 ## macOS
-### Using `brew`:
+### Using brew
 ```shell
 brew install kubectl minikube
 ```
 
-### Using `ports`:
+### Using ports
 ```shell
 sudo port selfupdate
 sudo port install kubectl minikube
 ```
 
-### Manual installation:
+### Manual installation
 #### kubectl
 ```shell
-curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/darwin/amd64/kubectl"
+VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/darwin/amd64/kubectl"
 
 chmod +x ./kubectl
 
@@ -84,7 +86,7 @@ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-latest
 sudo rpm -ivh minikube-latest.x86_64.rpm
 ```
 
-## Using `snap`
+## Using snap
 ```shell
 sudo snap install kubectl minikube --classic
 ```
