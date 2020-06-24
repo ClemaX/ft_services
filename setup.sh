@@ -11,6 +11,7 @@ KEYHOST=ft.services # Load balancer hostname
 
 # Container units
 UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps")
+ADDONS=("metrics-server" "dashboard" "ingress")
 
 setup_minikube()
 {
@@ -18,9 +19,9 @@ setup_minikube()
 	minikube start --driver=${DRIVER}
 
 	# Enable addons
-	minikube addons enable metrics-server
-	minikube addons enable dashboard
-	minikube addons enable ingress
+	for ADDON in ${ADDONS[@]}; do
+		minikube addons enable "${ADDON}"
+	done
 }
 
 setup_wait()
