@@ -2,12 +2,14 @@
 
 set -e              # Abort on error
 
-DRIVER=${DRIVER:-virtualbox} # Driver to use with minikube
+DRIVER=${DRIVER:-virtualbox}	# Driver to use with minikube
 PREFIX=ft_services  # Docker build prefix
 SRCDIR=srcs         # Directory which contains the deployments
 
 KEYDIR=keys         # Directory where keys and certs will be stored
 KEYHOST=ft.services # Load balancer hostname
+
+KEYS_DARWIN="$HOME/Library/Keychains/login.keychain"	# macOS Keychain location
 
 # Container units
 UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps")
@@ -73,6 +75,24 @@ build_certs()
 	kubectl create secret tls "${KEYHOST}-tls" --key "${KEYDIR}/${KEYHOST}.key" --cert "${KEYDIR}/${KEYHOST}.csr"
 }
 
+trust_certs()
+{
+	if [[ "$OSTYPE" = "darwin"* ]]; then
+		security add-trusted-cert -d -r trustRoot -k "${KEYS_DARWIN}" "${KEYDIR}/${KEYHOST}.csr"
+	else
+		sudo trust anchor --store "${KEYDIR}/${KEYHOST}.csr"
+	fi
+}
+
+untrust_certs()
+{
+	if [[ "$OSTYPE" = "darwin"* ]]; then
+		security delete-certificate -c "${KEYHOST}"
+	else
+		sudo trust anchor --remove "${KEYDIR}/${KEYHOST}.csr"
+	fi
+}
+
 setup()
 {
 	setup_minikube
@@ -105,9 +125,9 @@ delete()
 	echo
 
 	if [[ ${ANSWER} =~ ^[Yy]$ ]]; then
-	# Delete the minikube cluster
-	minikube delete
-	rm -rf keys/
+		# Delete the minikube cluster
+		minikube delete
+		rm -rf keys/
 	fi
 }
 
@@ -123,16 +143,20 @@ Commands:
 	delete		Delete the cluster
 	dashboard	Show the Kubernetes dashboard
 	help		Show this help message
+	trust		Attempt to install certificates
+	untrust		Attempt to uninstall certificates
 
 If no argument is provided, 'setup' will be assumed."
 }
 
 case "${1}" in 
+  "setup" | ""	)	setup; start;;
   "start"		)	start;;
   "stop"		)	stop;;
   "restart"		)	stop; start;;
   "delete"		)	delete;;
   "dashboard"	)	start_dashboard;;
-  "setup" | ""	)	setup; start;;
+  "trust"		)	trust_certs;;
+  "untrust"		)	untrust_certs;;
   * 			)	print_help;;
 esac
