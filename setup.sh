@@ -24,6 +24,9 @@ setup_minikube()
 	for ADDON in ${ADDONS[@]}; do
 		minikube addons enable "${ADDON}"
 	done
+
+	# Setup flannel
+	kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 }
 
 setup_wait()
