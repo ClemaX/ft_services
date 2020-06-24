@@ -101,9 +101,14 @@ stop()
 
 delete()
 {
+	read -p "Are you sure you want to delete the cluster? [y/N] " -n1 -r ANSWER
+	echo
+
+	if [[ ${ANSWER} =~ ^[Yy]$ ]]; then
 	# Delete the minikube cluster
 	minikube delete
 	rm -rf keys/
+	fi
 }
 
 print_help()
