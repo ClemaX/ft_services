@@ -6,7 +6,7 @@ DRIVER=${DRIVER:-virtualbox} # Driver to use with minikube
 PREFIX=ft_services  # Docker build prefix
 SRCDIR=srcs         # Directory which contains the deployments
 
-KEYDIR=keys         # Directory where keys and certs will be generated
+KEYDIR=keys         # Directory where keys and certs will be stored
 KEYHOST=ft.services # Load balancer hostname
 
 # Container units
@@ -52,17 +52,25 @@ build_units()
 
 build_certs()
 {
-	# Generate TLS keys
-	mkdir -p ${KEYDIR}
+	ANSWER="Y"
+	if [ -f "${KEYDIR}/${KEYHOST}.csr" ] || [ -f "${KEYDIR}/${KEYHOST}.key" ]; then
+		read -p "Do you want to overwrite the existing certificates? [y/N] " -n1 -r ANSWER
+		echo
+	fi
 
-	openssl req -x509 -nodes -days 365\
-		-newkey rsa:2048\
-		-keyout ${KEYDIR}/${KEYHOST}.key\
-		-out ${KEYDIR}/${KEYHOST}.csr\
-		-subj "/CN=${KEYHOST}/O=${KEYHOST}"
+	if [[ ${ANSWER} =~ ^[Yy]$ ]]; then
+		# Generate TLS keys
+		mkdir -p "${KEYDIR}"
 
-	kubectl delete secret ${KEYHOST}-tls || :
-	kubectl create secret tls ${KEYHOST}-tls --key ${KEYDIR}/${KEYHOST}.key --cert ${KEYDIR}/${KEYHOST}.csr
+		openssl req -x509 -nodes -days 365\
+			-newkey rsa:2048\
+			-keyout "${KEYDIR}/${KEYHOST}.key"\
+			-out "${KEYDIR}/${KEYHOST}.csr"\
+			-subj "/CN=${KEYHOST}/O=${KEYHOST}"
+	fi
+
+	kubectl delete secret "${KEYHOST}-tls" || :
+	kubectl create secret tls "${KEYHOST}-tls" --key "${KEYDIR}/${KEYHOST}.key" --cert "${KEYDIR}/${KEYHOST}.csr"
 }
 
 setup()
