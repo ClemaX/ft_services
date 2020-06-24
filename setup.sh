@@ -41,6 +41,12 @@ start_dashboard()
 	minikube dashboard --url
 }
 
+show_frontend()
+{
+	# Show web frontend url
+	echo "https://${KEYHOST}"
+}
+
 build_units()
 {
 	# Use minikube docker-env
@@ -142,6 +148,7 @@ Commands:
 	restart		Restart the running cluster
 	delete		Delete the cluster
 	dashboard	Show the Kubernetes dashboard
+	frontend	Show the web frontend
 	help		Show this help message
 	trust		Attempt to install certificates
 	untrust		Attempt to uninstall certificates
@@ -156,6 +163,7 @@ case "${1}" in
   "restart"		)	stop; start;;
   "delete"		)	delete;;
   "dashboard"	)	start_dashboard;;
+  "frontend"	)	show_frontend;;
   "trust"		)	trust_certs;;
   "untrust"		)	untrust_certs;;
   * 			)	print_help;;
