@@ -46,7 +46,7 @@ build_units()
 
 	# Build docker images
 	for UNIT in ${UNITS[@]}; do
-		docker build -t ${PREFIX}/${UNIT} ${SRCDIR}/${UNIT}
+		docker build -t "${PREFIX}/${UNIT}" "${SRCDIR}/${UNIT}"
 	done
 }
 
@@ -80,7 +80,7 @@ start()
 	setup_wait
 
 	# Apply kustomization
-	kubectl apply -k ${SRCDIR}
+	kubectl apply -k "${SRCDIR}"
 
 	start_dashboard
 }
@@ -100,7 +100,7 @@ delete()
 
 print_help()
 {
-	echo -e "Usage: $0 [COMMAND]
+	echo -e "Usage: ${0} [COMMAND]
 
 Commands:
 	setup		Setup and start the cluster
@@ -114,7 +114,7 @@ Commands:
 If no argument is provided, 'setup' will be assumed."
 }
 
-case "$1" in 
+case "${1}" in 
   "start"		)	start;;
   "stop"		)	stop;;
   "restart"		)	stop; start;;
