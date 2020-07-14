@@ -4,6 +4,21 @@ Deploying containerized services using Kubernetes.
 # Requirements
 This project uses `minikube` to provide a local K8 environment, as well as `kubectl` to administrate the cluster.
 
+You also need to use one of the following K8 drivers:
+- virtualbox
+- parallels
+- vmwarefusion
+- hyperkit
+- vmware
+- docker
+- podman
+- kvm2 (on Linux)
+
+It can be set in the `DRIVER` environment variable like this:
+```shell
+export DRIVER=[YOUR_DRIVER]
+```
+
 ## macOS
 ### Using brew
 ```shell
