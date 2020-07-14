@@ -13,7 +13,7 @@ KEYS_DARWIN="$HOME/Library/Keychains/login.keychain"	# macOS Keychain location
 
 # Container units
 UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps")
-ADDONS=("metrics-server" "dashboard" "ingress")
+ADDONS=("metrics-server" "dashboard")
 
 setup_minikube()
 {
@@ -32,10 +32,11 @@ setup_minikube()
 setup_wait()
 {
 	# Wait for ingress controller
-	kubectl wait --namespace kube-system \
-		--for=condition=ready pod \
-		--selector=app.kubernetes.io/component=controller \
-		--timeout=-1s
+	# kubectl wait --namespace kube-system \
+	#	--for=condition=ready pod \
+	#	--selector=app.kubernetes.io/component=controller \
+	#	--timeout=-1s
+	echo "Waiting for addons..."
 }
 
 start_dashboard()
