@@ -13,7 +13,7 @@ KEYS_DARWIN="$HOME/Library/Keychains/login.keychain"	# macOS Keychain location
 
 # Container units
 UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps")
-ADDONS=("metrics-server" "dashboard" "ingress")
+ADDONS=("metrics-server" "dashboard")
 
 setup_minikube()
 {
@@ -27,6 +27,10 @@ setup_minikube()
 
 	# Setup flannel
 	kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+	# Setup MetalLB
+	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
+	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
 }
 
 setup_wait()
@@ -80,8 +84,13 @@ build_certs()
 			-subj "/CN=${KEYHOST}/O=${KEYHOST}"
 	fi
 
+	# Update TLS secret
 	kubectl delete secret "${KEYHOST}-tls" || :
 	kubectl create secret tls "${KEYHOST}-tls" --key "${KEYDIR}/${KEYHOST}.key" --cert "${KEYDIR}/${KEYHOST}.csr"
+
+	# Update MetalLB secret
+	kubectl delete secret -n metallb-system memberlist || :
+	kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 }
 
 trust_certs()
