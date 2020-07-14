@@ -4,6 +4,21 @@ Deploying containerized services using Kubernetes.
 # Requirements
 This project uses `minikube` to provide a local K8 environment, as well as `kubectl` to administrate the cluster.
 
+You also need to use one of the following K8 drivers:
+- virtualbox
+- parallels
+- vmwarefusion
+- hyperkit
+- vmware
+- docker
+- podman
+- kvm2 (on Linux)
+
+It can be set in the `DRIVER` environment variable like this:
+```shell
+export DRIVER=[YOUR_DRIVER]
+```
+
 ## macOS
 ### Using brew
 ```shell
@@ -96,16 +111,16 @@ sudo snap install kubectl minikube --classic
 ./setup.sh [COMMAND]
 
 Commands:
-		setup			Setup and start the cluster
-		start			Start an existing cluster and apply changes
-		stop			Stop the running cluster
-		restart			Restart the running cluster
-		delete			Delete the cluster
-		dashboard		Show the Kubernetes dashboard
-		frontend		Show the web frontend
-		help			Show this help message
-		trust			Attempt to install certificates
-		untrust			Attempt to uninstall certificates
+        setup           Setup and start the cluster
+        start           Start an existing cluster and apply changes
+        stop            Stop the running cluster
+        restart         Restart the running cluster
+        delete          Delete the cluster
+        dashboard       Show the Kubernetes dashboard
+        frontend        Show the web frontend
+        help            Show this help message
+        trust           Attempt to install certificates
+        untrust         Attempt to uninstall certificates
 
 If no argument is provided, 'setup' will be assumed.
 ```

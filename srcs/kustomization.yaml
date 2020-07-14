@@ -38,7 +38,6 @@ secretGenerator:
       - username=admin
       - password=42grafana
 resources:
-  - ingress-controller.yaml
   - mysql/deployment.yaml
   - wordpress/deployment.yaml
   - phpmyadmin/deployment.yaml
