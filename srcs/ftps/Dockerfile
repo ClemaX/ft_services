@@ -11,6 +11,6 @@ RUN touch /etc/vsftpd/chroot_list && touch /var/log/vsftpd.log
 
 COPY srcs/init.sh /init.sh
 
-EXPOSE 21 30020
+EXPOSE 21 20
 
 CMD sh init.sh && vsftpd /etc/vsftpd/vsftpd.conf

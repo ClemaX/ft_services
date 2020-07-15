@@ -5,14 +5,12 @@ metadata:
   labels:
     app: ftps
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - name: ftp-data
-      port: 30020
-      nodePort: 30020
+      port: 20
     - name: ftp-cmd
       port: 21
-      nodePort: 30021
   selector:
     app: ftps
     tier: ftp
@@ -83,7 +81,7 @@ spec:
               key: password
         ports:
         - name: ftp-data
-          containerPort: 30020
+          containerPort: 20
         - name: ftp-cmd
           containerPort: 21
         volumeMounts:

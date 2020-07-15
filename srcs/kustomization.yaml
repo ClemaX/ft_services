@@ -38,6 +38,7 @@ secretGenerator:
       - username=admin
       - password=42grafana
 resources:
+  - metallb-config.yaml
   - mysql/deployment.yaml
   - wordpress/deployment.yaml
   - phpmyadmin/deployment.yaml

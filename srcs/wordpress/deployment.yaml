@@ -5,12 +5,11 @@ metadata:
   labels:
     app: wordpress
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - name: wordpress
       protocol: TCP
       port: 5050
-      nodePort: 30050
   selector:
     app: wordpress
     tier: frontend
@@ -84,7 +83,7 @@ spec:
         name: init-wordpress
         env:
         - name: WP_URL
-          value: http://ft.services:30050/ # This url should be set according to the NodePort and hostname
+          value: http://ft.services:5050/ # This url should be set according to the LoadBalancer and hostname
         - name: WP_TITLE
           value: ft_services
         - name: WP_LOCALE
