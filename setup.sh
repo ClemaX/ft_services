@@ -62,7 +62,7 @@ build_units()
 
 	# Build docker images
 	for UNIT in ${UNITS[@]}; do
-		docker build -t "${PREFIX}/${UNIT}" "${SRCDIR}/${UNIT}"
+		docker build -qt "${PREFIX}/${UNIT}" "${SRCDIR}/${UNIT}" 
 	done
 }
 
