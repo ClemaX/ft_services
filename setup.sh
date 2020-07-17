@@ -33,14 +33,28 @@ setup_minikube()
 	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
 }
 
-setup_wait()
+setup_init()
 {
-	# Wait for ingress controller
-	# kubectl wait --namespace kube-system \
-	#	--for=condition=ready pod \
-	#	--selector=app.kubernetes.io/component=controller \
-	#	--timeout=-1s
-	echo "Waiting for addons..."
+	OLDIFS=$IFS
+	IFS=.; set -- $(minikube ip)
+	if [ "$4" -gt 127 ]; then
+		LB_RANGE="$1.$2.$3.1-$1.$2.$3.127"
+	else
+		LB_RANGE="$1.$2.$3.129-$1.$2.$3.254"
+	fi
+	IFS=OLDIFS
+	CONFIGMAP=$(cat <<- EOF
+		address-pools:
+		- name: default
+		  protocol: layer2
+		  addresses:
+		  - $LB_RANGE
+	EOF
+	)
+
+	# Update MetalLB configmap
+	kubectl --namespace metallb-system delete configmap config || :
+	kubectl --namespace metallb-system create configmap config --from-literal=config=$CONFIGMAP
 }
 
 start_dashboard()
@@ -117,14 +131,14 @@ setup()
 	setup_minikube
 	build_units
 	build_certs
-	setup_wait
+	setup_init
 }
 
 start()
 {
 	# Start minikube
 	setup_minikube
-	setup_wait
+	setup_init
 
 	# Apply kustomization
 	kubectl apply -k "${SRCDIR}"
