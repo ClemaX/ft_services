@@ -58,12 +58,14 @@ metadata:
 spec:
   selector:
     matchLabels:
+      app: ftps
       tier: ftp
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
+        app: ftps
         tier: ftp
     spec:
       containers:
