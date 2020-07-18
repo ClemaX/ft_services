@@ -7,10 +7,21 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - name: ftp-data
-      port: 20
     - name: ftp-cmd
+      protocol: TCP
       port: 21
+    - name: ftp-pasv-0
+      protocol: TCP
+      port: 1024
+    - name: ftp-pasv-1
+      protocol: TCP
+      port: 1025
+    - name: ftp-pasv-2
+      protocol: TCP
+      port: 1026
+    - name: ftp-pasv-3
+      protocol: TCP
+      port: 1027
   selector:
     app: ftps
     tier: ftp
@@ -84,10 +95,16 @@ spec:
               name: ftp-secret
               key: password
         ports:
-        - name: ftp-data
-          containerPort: 20
         - name: ftp-cmd
           containerPort: 21
+        - name: ftp-pasv-0
+          containerPort: 1024
+        - name: ftp-pasv-1
+          containerPort: 1025
+        - name: ftp-pasv-2
+          containerPort: 1026
+        - name: ftp-pasv-3
+          containerPort: 1027
         volumeMounts:
         - name: ftp-persistent-storage
           mountPath: /var/ftp
