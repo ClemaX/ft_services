@@ -38,6 +38,7 @@ secretGenerator:
       - username=admin
       - password=42grafana
 resources:
+  - rolebindings.yaml
   - mysql/deployment.yaml
   - wordpress/deployment.yaml
   - phpmyadmin/deployment.yaml
