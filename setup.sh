@@ -12,7 +12,7 @@ KEYHOST=ft.services # Load balancer hostname
 KEYS_DARWIN="$HOME/Library/Keychains/login.keychain"	# macOS Keychain location
 
 # Container units
-UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps")
+UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps" "influxdb")
 ADDONS=("metrics-server" "dashboard")
 
 setup_minikube()
@@ -55,6 +55,9 @@ setup_init()
 	# Update MetalLB configmap
 	kubectl --namespace metallb-system delete configmap config || :
 	kubectl --namespace metallb-system create configmap config --from-literal=config=$CONFIGMAP
+
+	# Create 'monitoring' namespace
+	kubectl create namespace monitoring
 }
 
 start_dashboard()

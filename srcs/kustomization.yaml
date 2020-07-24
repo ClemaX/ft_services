@@ -23,9 +23,11 @@ secretGenerator:
       - username=admin
       - password=42ftp
   - name: influxdb-database
+    namespace: monitoring
     literals:
       - monitoring=monitoring
   - name: influxdb-secret
+    namespace: monitoring
     literals:
       - admin-username=admin
       - admin-password=42influx
@@ -34,11 +36,14 @@ secretGenerator:
       - grafana-username=grafana
       - grafana-password=42grafana
   - name: grafana-secret
+    namespace: monitoring
     literals:
       - username=admin
       - password=42grafana
 resources:
+
   - rolebindings.yaml
+  - influxdb/deployment.yaml
   - mysql/deployment.yaml
   - wordpress/deployment.yaml
   - phpmyadmin/deployment.yaml
