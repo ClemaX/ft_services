@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: monitoring
+  name: grafana
+  labels:
+    app: grafana
+spec:
+  type: LoadBalancer
+  ports:
+    - name: grafana
+      protocol: TCP
+      port: 3000
+  selector:
+    app: grafana
+    tier: frontend
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: monitoring
+  name: grafana-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/grafana"
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    namespace: monitoring
+    name: grafana-pv-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: monitoring
+  name: grafana-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  volumeName: grafana-pv
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  namespace: monitoring
+  name: grafana
+  labels:
+    app: grafana
+spec:
+  selector:
+    matchLabels:
+      app: grafana
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      namespace: monitoring
+      labels:
+        app: grafana
+        tier: frontend
+    spec:
+      containers:
+      - image: ft_services/grafana
+        imagePullPolicy: Never
+        name: grafana
+        ports:
+        - containerPort: 3000
+          name: grafana
+        env:
+          - name: GRAFANA_DIR
+            value: /var/lib/grafana
+          - name: GF_SECURITY_ADMIN_USER
+            valueFrom:
+              secretKeyRef:
+                name: grafana-secret
+                key: username
+          - name: GF_SECURITY_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: grafana-secret
+                key: password
+          - name: GF_SECURITY_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: grafana-secretkey
+                key: secretkey
+          - name: INFLUXDB_URL
+            value: http://influxdb:8086
+          - name: INFLUXDB_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: influxdb-database
+                key: monitoring
+          - name: INFLUXDB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: influxdb-secret
+                key: grafana-username
+          - name: INFLUXDB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: influxdb-secret
+                key: grafana-password
+        volumeMounts:
+          - name: grafana-persistent-storage
+            mountPath: /var/lib/grafana
+      initContainers:
+      - name: init-grafana
+        image: ft_services/grafana
+        imagePullPolicy: Never
+        env:
+          - name: GRAFANA_DIR
+            value: /var/lib/grafana
+        volumeMounts:
+          - name: grafana-persistent-storage
+            mountPath: /var/lib/grafana
+        command: ['/bin/sh']
+        args: ['/init.sh']
+      volumes:
+      - name: grafana-persistent-storage
+        persistentVolumeClaim:
+          claimName: grafana-pv-claim
+    

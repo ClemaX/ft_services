@@ -12,7 +12,7 @@ KEYHOST=ft.services # Load balancer hostname
 KEYS_DARWIN="$HOME/Library/Keychains/login.keychain"	# macOS Keychain location
 
 # Container units
-UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps" "influxdb")
+UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps" "influxdb" "grafana")
 ADDONS=("metrics-server" "dashboard")
 
 setup_minikube()
@@ -109,6 +109,10 @@ build_certs()
 	# Update MetalLB secret
 	kubectl delete secret -n metallb-system memberlist || :
 	kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+
+	# Update Grafana secret
+	kubectl delete secret -n monitoring grafana-secret || :
+	kubectl create secret generic -n monitoring grafana-secretkey --from-literal=secretkey="$(openssl rand -base64 20)"
 }
 
 trust_certs()

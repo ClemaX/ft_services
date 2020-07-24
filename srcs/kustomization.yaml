@@ -44,6 +44,7 @@ resources:
 
   - rolebindings.yaml
   - influxdb/deployment.yaml
+  - grafana/deployment.yaml
   - mysql/deployment.yaml
   - wordpress/deployment.yaml
   - phpmyadmin/deployment.yaml
