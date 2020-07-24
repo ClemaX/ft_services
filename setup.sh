@@ -2,7 +2,7 @@
 
 set -e              # Abort on error
 
-DRIVER=${DRIVER:-virtualbox}	# Driver to use with minikube
+NAME=minikube		# Minikube Name
 PREFIX=ft_services  # Docker build prefix
 SRCDIR=srcs         # Directory which contains the deployments
 
@@ -18,11 +18,11 @@ ADDONS=("metrics-server" "dashboard")
 setup_minikube()
 {
 	# Start minikube
-	minikube start --driver=${DRIVER}
+	minikube -p ${NAME} start --driver=${DRIVER}
 
 	# Enable addons
 	for ADDON in ${ADDONS[@]}; do
-		minikube addons enable "${ADDON}"
+		minikube -p ${NAME} addons enable "${ADDON}"
 	done
 
 	# Setup flannel
@@ -63,7 +63,7 @@ setup_init()
 start_dashboard()
 {
 	# Show web dashboard url
-	minikube dashboard --url
+	minikube -p ${NAME} dashboard --url
 }
 
 show_frontend()
@@ -75,7 +75,7 @@ show_frontend()
 build_units()
 {
 	# Use minikube docker-env
-	eval $(minikube docker-env)
+	eval $(minikube -p ${NAME} docker-env)
 
 	# Build docker images
 	for UNIT in ${UNITS[@]}; do
@@ -156,7 +156,7 @@ start()
 stop()
 {
 	# Stop minikube
-	minikube stop
+	minikube -p ${NAME} stop
 }
 
 delete()
@@ -166,7 +166,7 @@ delete()
 
 	if [[ ${ANSWER} =~ ^[Yy]$ ]]; then
 		# Delete the minikube cluster
-		minikube delete
+		minikube -p ${NAME} delete
 		rm -rf keys/
 	fi
 }
