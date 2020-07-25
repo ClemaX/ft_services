@@ -4,20 +4,23 @@ metadata:
   namespace: monitoring
   name: telegraf
   labels:
-    app: telegraf
+    app: grafana
 spec:
   selector:
-    name: telegraf
-    app: telegraf
+    matchLabels:
+      app: grafana
+      tier: telegraf
   template:
     metadata:
       labels:
-        name: telegraf
-        app: telegraf
+        app: grafana
+        tier: telegraf
     spec:
+      serviceAccountName: metrics
       containers:
       - name: telegraf
-        image: ft_service/telegraf
+        image: ft_services/telegraf
+        imagePullPolicy: Never
         resources:
           limits:
             memory: "500Mi"
@@ -25,23 +28,31 @@ spec:
             cpu: "500m"
             memory: "500Mi"
         env:
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
           - name: INFLUXDB_URL
             value: http://influxdb:8086
           - name: INFLUXDB_DATABASE
             valueFrom:
                 secretKeyRef:
-                  name: influxdb-secret
-                  key: database
+                  name: influxdb-database
+                  key: monitoring
           - name: INFLUXDB_USERNAME
             valueFrom:
                 secretKeyRef:
                   name: influxdb-secret
-                  key: username
+                  key: telegraf-username
           - name: INFLUXDB_PASSWORD
             valueFrom:
                 secretKeyRef:
                   name: influxdb-secret
-                  key: password
+                  key: telegraf-password
+          - name: HOST_PROC
+            value: /rootfs/proc
+          - name: HOST_SYS
+            value: /rootfs/sys
         volumeMounts:
           - name: sys
             mountPath: /rootfs/sys
