@@ -80,9 +80,9 @@ spec:
         tier: ftp
     spec:
       containers:
-      - image: ft_services/ftps
+      - image: ft_services/ftp
         imagePullPolicy: Never
-        name: ftps
+        name: ftp
         env:
         - name: FTP_USERNAME
           valueFrom:

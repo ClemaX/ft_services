@@ -13,7 +13,7 @@ KEYHOST=ft.services # Load balancer hostname
 KEYS_DARWIN="$HOME/Library/Keychains/login.keychain"	# macOS Keychain location
 
 # Container units
-UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps" "influxdb" "grafana")
+UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftp" "influxdb" "grafana")
 ADDONS=("metrics-server" "dashboard")
 
 setup_minikube()

@@ -50,4 +50,4 @@ resources:
   - wordpress/deployment.yaml
   - phpmyadmin/deployment.yaml
   - nginx/deployment.yaml
-  - ftps/deployment.yaml
+  - ftp/deployment.yaml
