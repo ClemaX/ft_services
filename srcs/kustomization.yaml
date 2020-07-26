@@ -41,7 +41,6 @@ secretGenerator:
       - username=admin
       - password=42grafana
 resources:
-
   - rolebindings.yaml
   - influxdb/deployment.yaml
   - telegraf/deployment.yaml
