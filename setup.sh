@@ -37,7 +37,7 @@ setup_minikube()
 setup_init()
 {
 	OLDIFS=${IFS}
-	IFS=.; set -- $(minikube ip)
+	IFS=.; set -- $(minikube -p ${NAME} ip)
 	if [ "${4}" -gt 127 ]; then
 		LB_RANGE="${1}.${2}.${3}.1-${1}.${2}.${3}.127"
 	else
