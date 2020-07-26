@@ -27,11 +27,6 @@ RUN wget -qO /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/g
 RUN adduser -D -G${WWW_USER} ${WWW_USER}\
 	&& chown -R ${WWW_USER}:${WWW_USER} /var/lib/nginx
 
-# Setup nginx config
-RUN rm /etc/nginx/conf.d/default.conf
-COPY srcs/nginx/wordpress.conf /etc/nginx/conf.d/wordpress.conf
-COPY srcs/nginx/nginx.conf /etc/nginx/nginx.conf
-
 # Setup php-fpm config
 RUN sed -i /etc/php7/php-fpm.d/www.conf\
 	-e "s|;listen.owner\s*=\s*nobody|listen.owner = ${WWW_USER}|g"\
@@ -41,6 +36,11 @@ RUN sed -i /etc/php7/php-fpm.d/www.conf\
 	-e "s|group\s*=\s*nobody|group = ${WWW_USER}|g"\
 	-e "s|;log_level\s*=\s*notice|log_level = notice|g"\
 	/etc/php7/php-fpm.d/www.conf
+
+# Setup nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+COPY srcs/nginx/wordpress.conf /etc/nginx/conf.d/wordpress.conf
+COPY srcs/nginx/nginx.conf /etc/nginx/nginx.conf
 
 COPY srcs/init.sh /init.sh
 
