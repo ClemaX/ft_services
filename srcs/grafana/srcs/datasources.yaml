@@ -1,7 +1,7 @@
 apiVersion: 1
 
 datasources:
-  - name: InfluxDB
+  - name: ${DS_INFLUXK8S}
     type: influxdb
     access: proxy
     database: ${INFLUXDB_DATABASE}

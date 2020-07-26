@@ -124,3 +124,6 @@ Commands:
 
 If no argument is provided, 'setup' will be assumed.
 ```
+
+# Acknowledgements
+Thanks to [russorat](https://grafana.com/orgs/russorat) for his Kubernetes [Aggregated Container Stats dashboard](https://grafana.com/grafana/dashboards/9111)!
