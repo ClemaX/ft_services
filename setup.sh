@@ -3,7 +3,7 @@
 set -e              # Abort on error
 
 DRIVER=${DRIVER:-docker}	# Driver to use with minikube
-NAME=minikube		# Minikube Name
+NAME=ft-services	# Minikube Name
 PREFIX=ft_services  # Docker build prefix
 SRCDIR=srcs         # Directory which contains the deployments
 
