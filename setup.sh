@@ -109,7 +109,7 @@ build_certs()
 			-newkey rsa:2048\
 			-keyout "${KEYDIR}/${KEYHOST}.key"\
 			-out "${KEYDIR}/${KEYHOST}.csr"\
-			-subj "/CN=${KEYHOST}/O=${KEYHOST}"
+			-subj "/CN=*.${KEYHOST}/O=${KEYHOST}"
 	fi
 
 	# Update TLS secret
