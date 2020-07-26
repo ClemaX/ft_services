@@ -32,6 +32,9 @@ setup_minikube()
 	# Setup MetalLB
 	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
 	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
+
+	# Setup namespaces
+	kubectl apply -f ${SRCDIR}/namespaces.yaml
 }
 
 setup_init()
@@ -56,9 +59,6 @@ setup_init()
 	# Update MetalLB configmap
 	kubectl --namespace metallb-system delete configmap config || :
 	kubectl --namespace metallb-system create configmap config --from-literal=config=$CONFIGMAP
-
-	# Create 'monitoring' namespace
-	kubectl create namespace monitoring || :
 
 	# Restore IFS
 	IFS=${OLDIFS}
