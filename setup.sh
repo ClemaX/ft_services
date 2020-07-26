@@ -76,6 +76,12 @@ show_frontend()
 	echo "https://${KEYHOST}"
 }
 
+build_unit()
+{
+	echo "Building ${1}..."
+	docker build -qt "${PREFIX}/${1}" "${SRCDIR}/${1}" 
+}
+
 build_units()
 {
 	# Use minikube docker-env
@@ -83,7 +89,7 @@ build_units()
 
 	# Build docker images
 	for UNIT in ${UNITS[@]}; do
-		docker build -qt "${PREFIX}/${UNIT}" "${SRCDIR}/${UNIT}" 
+		build_unit "${UNIT}"
 	done
 }
 
