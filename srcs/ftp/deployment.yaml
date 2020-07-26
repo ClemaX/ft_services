@@ -117,4 +117,4 @@ spec:
           claimName: ftp-pv-claim
       - name: ftp-tls
         secret:
-          secretName: ft.services-tls
+          secretName: default-tls

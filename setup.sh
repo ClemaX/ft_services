@@ -114,7 +114,7 @@ build_certs()
 
 	# Update TLS secret
 	kubectl delete secret "${KEYHOST}-tls" || :
-	kubectl create secret tls "${KEYHOST}-tls" --key "${KEYDIR}/${KEYHOST}.key" --cert "${KEYDIR}/${KEYHOST}.csr"
+	kubectl create secret tls default-tls --key "${KEYDIR}/${KEYHOST}.key" --cert "${KEYDIR}/${KEYHOST}.csr"
 
 	# Update MetalLB secret
 	kubectl delete secret -n metallb-system memberlist || :
