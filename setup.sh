@@ -13,7 +13,7 @@ KEYHOST=ft.services # Load balancer hostname
 KEYS_DARWIN="$HOME/Library/Keychains/login.keychain"	# macOS Keychain location
 
 # Container units
-UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftp" "influxdb" "grafana")
+UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftp" "influxdb" "grafana" "telegraf")
 ADDONS=("metrics-server" "dashboard")
 
 setup_minikube()
@@ -143,6 +143,19 @@ untrust_certs()
 	fi
 }
 
+update_unit()
+{
+	if printf '%s\n' ${UNITS[@]} | grep -q -P "^${1}\$"; then
+		eval $(minikube -p ${NAME} docker-env)
+		build_unit "${1}"
+		kubectl delete -f "${SRCDIR}/${1}/deployment.yaml"
+		kubectl apply -k srcs
+	else
+		echo "${1} is not a valid unit!"
+		exit 1
+	fi
+}
+
 setup()
 {
 	setup_minikube
@@ -157,9 +170,13 @@ start()
 	setup_minikube
 	setup_init
 
+	# Update units
+	build_units
+
 	# Apply kustomization
 	kubectl apply -k "${SRCDIR}"
 
+	# Start the Kubernetes dashboard
 	start_dashboard
 }
 
@@ -210,5 +227,6 @@ case "${1}" in
   "frontend"	)	show_frontend;;
   "trust"		)	trust_certs;;
   "untrust"		)	untrust_certs;;
+  "update"		)	update_unit "${2}";;
   * 			)	print_help;;
 esac
