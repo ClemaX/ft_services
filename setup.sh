@@ -58,6 +58,7 @@ setup_init()
 	kubectl --namespace metallb-system create configmap config --from-literal=config=$CONFIGMAP
 
 	# Create 'monitoring' namespace
+	kubectl create namespace monitoring || :
 
 	# Restore IFS
 	IFS=$OLDIFS
