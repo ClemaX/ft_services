@@ -36,12 +36,12 @@ setup_minikube()
 
 setup_init()
 {
-	OLDIFS=$IFS
+	OLDIFS=${IFS}
 	IFS=.; set -- $(minikube ip)
-	if [ "$4" -gt 127 ]; then
-		LB_RANGE="$1.$2.$3.1-$1.$2.$3.127"
+	if [ "${4}" -gt 127 ]; then
+		LB_RANGE="${1}.${2}.${3}.1-${1}.${2}.${3}.127"
 	else
-		LB_RANGE="$1.$2.$3.129-$1.$2.$3.254"
+		LB_RANGE="${1}.${2}.${3}.129-${1}.${2}.${3}.254"
 	fi
 	IFS=OLDIFS
 	CONFIGMAP=$(cat <<- EOF
@@ -49,7 +49,7 @@ setup_init()
 		- name: default
 		  protocol: layer2
 		  addresses:
-		  - $LB_RANGE
+		  - ${LB_RANGE}
 	EOF
 	)
 
@@ -61,7 +61,7 @@ setup_init()
 	kubectl create namespace monitoring || :
 
 	# Restore IFS
-	IFS=$OLDIFS
+	IFS=${OLDIFS}
 }
 
 start_dashboard()
@@ -127,7 +127,7 @@ build_certs()
 
 trust_certs()
 {
-	if [[ "$OSTYPE" = "darwin"* ]]; then
+	if [[ "${OSTYPE}" = "darwin"* ]]; then
 		security add-trusted-cert -d -r trustRoot -k "${KEYS_DARWIN}" "${KEYDIR}/${KEYHOST}.csr"
 	else
 		sudo trust anchor --store "${KEYDIR}/${KEYHOST}.csr"
@@ -136,7 +136,7 @@ trust_certs()
 
 untrust_certs()
 {
-	if [[ "$OSTYPE" = "darwin"* ]]; then
+	if [[ "${OSTYPE}" = "darwin"* ]]; then
 		security delete-certificate -c "${KEYHOST}"
 	else
 		sudo trust anchor --remove "${KEYDIR}/${KEYHOST}.csr"
