@@ -145,6 +145,13 @@ untrust_certs()
 
 update_unit()
 {
+	if [[ "${1}" = "" ]]; then
+		echo -e "Usage: ${0} update [UNIT]
+
+Units:"
+		printf '	%s\n' ${UNITS[@]}
+		exit 1
+	fi
 	if printf '%s\n' ${UNITS[@]} | grep -q -P "^${1}\$"; then
 		eval $(minikube -p ${NAME} docker-env)
 		build_unit "${1}"
