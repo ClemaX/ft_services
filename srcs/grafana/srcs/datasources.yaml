@@ -6,7 +6,8 @@ datasources:
     access: proxy
     database: ${INFLUXDB_DATABASE}
     user: ${INFLUXDB_USERNAME}
-    password: ${INFLUXDB_PASSWORD}
+    secureJsonData:
+      password: ${INFLUXDB_PASSWORD}
     url: ${INFLUXDB_URL}
     jsonData:
       httpMode: GET
