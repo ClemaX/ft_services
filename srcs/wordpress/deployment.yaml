@@ -81,13 +81,16 @@ spec:
         volumeMounts:
         - name: wordpress-persistent-storage
           mountPath: /var/www/wordpress
+        - name: tls
+          mountPath: /etc/nginx/certs
+          readOnly: true
       initContainers:
       - image: ft_services/wordpress
         imagePullPolicy: Never
         name: init-wordpress
         env:
         - name: WP_URL
-          value: http://ft.services:5050/ # This url should be set according to the LoadBalancer and hostname
+          value: https://ft.services:5050/ # This url should be set according to the LoadBalancer and hostname
         - name: WP_TITLE
           value: ft_services
         - name: WP_LOCALE
@@ -163,3 +166,6 @@ spec:
       - name: wordpress-persistent-storage
         persistentVolumeClaim:
           claimName: wp-pv-claim
+      - name: tls
+        secret:
+          secretName: default-tls
