@@ -124,6 +124,36 @@ spec:
             secretKeyRef:
               name: wordpress-secret
               key: admin-email
+        - name: WP_AUTHOR_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: author-username
+        - name: WP_AUTHOR_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: author-password
+        - name: WP_AUTHOR_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: author-email
+        - name: WP_EDITOR_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: editor-username
+        - name: WP_EDITOR_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: editor-password
+        - name: WP_EDITOR_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: editor-email
         volumeMounts:
         - name: wordpress-persistent-storage
           mountPath: /var/www/wordpress

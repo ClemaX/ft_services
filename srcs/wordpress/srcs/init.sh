@@ -23,7 +23,8 @@ config_wordpress()
 	wp --path=${WWW_DIR} config set DB_HOST ${MYSQL_HOST}
 }
 
-install_wordpress() {
+install_wordpress()
+{
 	echo "Installing wordpress..."
 	wp core install\
 		--path=${WWW_DIR}\
@@ -34,9 +35,22 @@ install_wordpress() {
 		--admin_email=${WP_ADMIN_EMAIL}
 }
 
-wp --path=${WWW_DIR} core is-installed\
-	&& config_wordpress\
-	|| download_wordpress && config_wordpress && install_wordpress
+create_users()
+{
+	echo "Creating author '${WP_AUTHOR_USERNAME}'..."
+	wp --path=${WWW_DIR} user create ${WP_AUTHOR_USERNAME} ${WP_AUTHOR_EMAIL} --user_pass=${WP_AUTHOR_PASSWORD} --role=author
+	echo "Creating editor '${WP_EDITOR_USERNAME}'..."
+	wp --path=${WWW_DIR} user create ${WP_EDITOR_USERNAME} ${WP_EDITOR_EMAIL} --user_pass=${WP_EDITOR_PASSWORD} --role=editor
+}
+
+if wp --path=${WWW_DIR} core is-installed; then
+	config_wordpress
+else
+	download_wordpress
+	config_wordpress
+	install_wordpress
+	create_users
+fi
 
 chown -R ${WWW_USER}:${WWW_USER} ${WWW_DIR}
 echo "Done!"

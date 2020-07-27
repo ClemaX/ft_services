@@ -14,6 +14,12 @@ secretGenerator:
       - admin-username=admin
       - admin-password=42wp
       - admin-email=admin@ft.services
+      - author-username=author
+      - author-password=42wpauthor
+      - author-email=author@ft.services
+      - editor-username=editor
+      - editor-password=42wpeditor
+      - editor-email=editor@ft.services
   - name: nginx-ssh-secret
     literals:
       - username=www-data
