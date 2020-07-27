@@ -67,6 +67,10 @@ spec:
         app: wordpress
         tier: frontend
     spec:
+      hostAliases:
+      - ip: 127.0.0.1
+        hostnames:
+        - ft.services
       containers:
       - image: ft_services/wordpress
         imagePullPolicy: Never
