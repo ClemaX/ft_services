@@ -60,7 +60,7 @@ setup_init()
 
 	# Update MetalLB configmap
 	kubectl --namespace metallb-system delete configmap config || :
-	kubectl --namespace metallb-system create configmap config --from-literal=config=$CONFIGMAP
+	kubectl --namespace metallb-system create configmap config --from-literal="config=${CONFIGMAP}"
 }
 
 start_dashboard()
