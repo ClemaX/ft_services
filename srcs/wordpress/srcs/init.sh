@@ -21,6 +21,11 @@ config_wordpress()
 	wp --path=${WWW_DIR} config set DB_USER ${MYSQL_WP_USERNAME}
 	wp --path=${WWW_DIR} config set DB_PASSWORD ${MYSQL_WP_PASSWORD} --quiet
 	wp --path=${WWW_DIR} config set DB_HOST ${MYSQL_HOST}
+}
+
+config_wordpress_postinstall()
+{
+	echo "Setting website url to ${WP_URL}..."
 	wp --path=${WWW_DIR} option update home ${WP_URL}
 	wp --path=${WWW_DIR} option update siteurl ${WP_URL}
 }
@@ -47,10 +52,12 @@ create_users()
 
 if wp --path=${WWW_DIR} core is-installed; then
 	config_wordpress
+	config_wordpress_postinstall
 else
 	download_wordpress
 	config_wordpress
 	install_wordpress
+	config_wordpress_postinstall
 	create_users
 fi
 
