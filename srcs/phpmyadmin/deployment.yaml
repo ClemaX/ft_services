@@ -76,6 +76,9 @@ spec:
         volumeMounts:
         - name: phpmyadmin-persistent-storage
           mountPath: /usr/share/phpmyadmin
+        - name: tls
+          mountPath: /etc/nginx/certs
+          readOnly: true
       initContainers:
       - image: ft_services/phpmyadmin
         imagePullPolicy: Never
@@ -102,3 +105,6 @@ spec:
         - name: phpmyadmin-persistent-storage
           persistentVolumeClaim:
             claimName: php-pv-claim
+        - name: tls
+          secret:
+            secretName: default-tls
