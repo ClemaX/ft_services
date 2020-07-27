@@ -112,7 +112,7 @@ build_certs()
 	fi
 
 	# Update TLS secret
-	kubectl delete secret "${KEYHOST}-tls" || :
+	kubectl delete secret default-tls || :
 	kubectl create secret tls default-tls --key "${KEYDIR}/${KEYHOST}.key" --cert "${KEYDIR}/${KEYHOST}.csr"
 
 	# Update MetalLB secret
@@ -120,7 +120,7 @@ build_certs()
 	kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 
 	# Update Grafana secret
-	kubectl delete secret -n monitoring grafana-secret || :
+	kubectl delete secret -n monitoring grafana-secretkey || :
 	kubectl create secret generic -n monitoring grafana-secretkey --from-literal=secretkey="$(openssl rand -base64 20)"
 }
 
