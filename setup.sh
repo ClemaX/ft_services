@@ -10,7 +10,7 @@ SRCDIR=srcs         # Directory which contains the deployments
 KEYDIR=keys         # Directory where keys and certs will be stored
 KEYHOST=ft.services # Load balancer hostname
 
-KEYS_DARWIN="$HOME/Library/Keychains/login.keychain"	# macOS Keychain location
+KEYS_DARWIN="${HOME}/Library/Keychains/login.keychain"	# macOS Keychain location
 
 # Container units
 UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftp" "influxdb" "grafana" "telegraf")
@@ -46,7 +46,9 @@ setup_init()
 	else
 		LB_RANGE="${1}.${2}.${3}.129-${1}.${2}.${3}.254"
 	fi
-	IFS=OLDIFS
+	# Restore IFS
+	IFS=${OLDIFS}
+
 	CONFIGMAP=$(cat <<- EOF
 		address-pools:
 		- name: default
@@ -59,9 +61,6 @@ setup_init()
 	# Update MetalLB configmap
 	kubectl --namespace metallb-system delete configmap config || :
 	kubectl --namespace metallb-system create configmap config --from-literal=config=$CONFIGMAP
-
-	# Restore IFS
-	IFS=${OLDIFS}
 }
 
 start_dashboard()
