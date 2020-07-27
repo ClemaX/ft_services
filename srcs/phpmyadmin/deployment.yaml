@@ -83,6 +83,16 @@ spec:
         env:
         - name: MYSQL_HOST
           value: wordpress-mysql
+        - name: MYSQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: php-username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: php-password
         volumeMounts:
         - name: phpmyadmin-persistent-storage
           mountPath: /usr/share/phpmyadmin
