@@ -154,7 +154,7 @@ Units:"
 	if printf '%s\n' ${UNITS[@]} | grep -q -P "^${1}\$"; then
 		eval $(minikube -p ${NAME} docker-env)
 		build_unit "${1}"
-		kubectl delete -f "${SRCDIR}/${1}/deployment.yaml"
+		kubectl delete -f "${SRCDIR}/${1}/deployment.yaml" || :
 		kubectl apply -k srcs
 	else
 		echo "${1} is not a valid unit!"
