@@ -95,6 +95,12 @@ spec:
               secretKeyRef:
                 name: grafana-secretkey
                 key: secretkey
+          - name: GF_SERVER_PROTOCOL
+            value: https
+          - name: GF_SERVER_CERT_FILE
+            value: /etc/grafana/certs/tls.crt
+          - name: GF_SERVER_CERT_KEY
+            value: /etc/grafana/certs/tls.key
           - name: INFLUXDB_URL
             value: http://influxdb:8086
           - name: INFLUXDB_DATABASE
@@ -115,6 +121,9 @@ spec:
         volumeMounts:
           - name: grafana-persistent-storage
             mountPath: /var/lib/grafana
+          - name: tls
+            mountPath: /etc/grafana/certs
+            readOnly: true
       initContainers:
       - name: init-grafana
         image: ft_services/grafana
@@ -131,4 +140,6 @@ spec:
       - name: grafana-persistent-storage
         persistentVolumeClaim:
           claimName: grafana-pv-claim
-    
+      - name: tls
+        secret:
+          secretName: default-tls

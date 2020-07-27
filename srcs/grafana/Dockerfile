@@ -16,6 +16,11 @@ ENV GRAFANA_DIR=/var/lib/grafana
 # ENV GF_SECURITY_ADMIN_USER=admin
 # ENV GF_SECURITY_ADMIN_PASSWORD=admin
 
+# TLS
+# ENV GF_SERVER_PROTOCOL=https
+# ENV GF_SERVER_CERT_FILE=tls.crt
+# ENV GF_SERVER_CERT_KEY=tls.key
+
 # Install dependencies
 RUN apk add --update --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted grafana
 
