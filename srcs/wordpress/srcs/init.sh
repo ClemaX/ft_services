@@ -10,8 +10,9 @@ set -o pipefail
 download_wordpress()
 {
 	echo "Downloading wordpress..."
-	wp --path=${WWW_DIR} core download --locale=${WP_LOCALE}
-	cp ${WWW_DIR}/wp-config-sample.php ${WWW_DIR}/wp-config.php
+	if wp --path=${WWW_DIR} core download --locale=${WP_LOCALE}; then
+		cp ${WWW_DIR}/wp-config-sample.php ${WWW_DIR}/wp-config.php
+	fi
 }
 
 config_wordpress()
