@@ -26,9 +26,6 @@ setup_minikube()
 		minikube -p ${NAME} addons enable "${ADDON}"
 	done
 
-	# Setup flannel
-	kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-
 	# Setup MetalLB
 	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
 	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
