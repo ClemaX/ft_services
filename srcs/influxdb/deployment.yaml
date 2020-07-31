@@ -23,7 +23,7 @@ metadata:
 spec:
   storageClassName: manual
   capacity:
-    storage: 2Gi
+    storage: 128Mi
   accessModes:
     - ReadWriteOnce
   hostPath:
@@ -44,7 +44,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 128Mi
   volumeName: influxdb-pv
 ---
 apiVersion: apps/v1
