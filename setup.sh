@@ -10,8 +10,6 @@ SRCDIR=srcs         # Directory which contains the deployments
 KEYDIR=keys         # Directory where keys and certs will be stored
 KEYHOST=ft.services # Load balancer hostname
 
-KEYS_DARWIN="${HOME}/Library/Keychains/login.keychain"	# macOS Keychain location
-
 # Container units
 UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftp" "influxdb" "grafana" "telegraf")
 ADDONS=("metrics-server" "dashboard")
@@ -69,12 +67,6 @@ start_dashboard()
 	minikube -p ${NAME} dashboard --url
 }
 
-show_frontend()
-{
-	# Show web frontend url
-	echo "https://${KEYHOST}"
-}
-
 build_unit()
 {
 	echo "Building ${1}..."
@@ -124,24 +116,6 @@ build_certs()
 	# Update Grafana secret
 	kubectl delete secret -n monitoring grafana-secretkey || :
 	kubectl create secret generic -n monitoring grafana-secretkey --from-literal=secretkey="$(openssl rand -base64 20)"
-}
-
-trust_certs()
-{
-	if [[ "${OSTYPE}" = "darwin"* ]]; then
-		security add-trusted-cert -d -r trustRoot -k "${KEYS_DARWIN}" "${KEYDIR}/${KEYHOST}.csr"
-	else
-		sudo trust anchor --store "${KEYDIR}/${KEYHOST}.csr"
-	fi
-}
-
-untrust_certs()
-{
-	if [[ "${OSTYPE}" = "darwin"* ]]; then
-		security delete-certificate -c "${KEYHOST}"
-	else
-		sudo trust anchor --remove "${KEYDIR}/${KEYHOST}.csr"
-	fi
 }
 
 update_unit()
@@ -217,10 +191,7 @@ Commands:
 	restart		Restart the running cluster
 	delete		Delete the cluster
 	dashboard	Show the Kubernetes dashboard
-	frontend	Show the web frontend
 	help		Show this help message
-	trust		Attempt to install certificates
-	untrust		Attempt to uninstall certificates
 	update		Update an unit's image
 
 If no argument is provided, 'setup' will be assumed."
@@ -233,9 +204,6 @@ case "${1}" in
   "restart"		)	stop; start;;
   "delete"		)	delete;;
   "dashboard"	)	start_dashboard;;
-  "frontend"	)	show_frontend;;
-  "trust"		)	trust_certs;;
-  "untrust"		)	untrust_certs;;
   "update"		)	update_unit "${2}";;
   * 			)	print_help;;
 esac

@@ -117,10 +117,7 @@ Commands:
         restart         Restart the running cluster
         delete          Delete the cluster
         dashboard       Show the Kubernetes dashboard
-        frontend        Show the web frontend
         help            Show this help message
-        trust           Attempt to install certificates
-        untrust         Attempt to uninstall certificates
 		update          Update an unit's image
 
 If no argument is provided, 'setup' will be assumed.
