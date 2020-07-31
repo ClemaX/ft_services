@@ -3,7 +3,7 @@
 set -e              # Abort on error
 
 DRIVER=${DRIVER:-docker}	# Driver to use with minikube
-NAME=ft-services	# Minikube Name
+NAME=ft.services	# Minikube profile
 PREFIX=ft_services  # Docker build prefix
 SRCDIR=srcs         # Directory which contains the deployments
 
@@ -14,14 +14,38 @@ KEYHOST=ft.services # Load balancer hostname
 UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftp" "influxdb" "grafana" "telegraf")
 ADDONS=("metrics-server" "dashboard")
 
+start_minikube()
+{
+	# Start minikube
+	minikube -p "${NAME}" start --driver="${DRIVER}"
+}
+
+stop_minikube()
+{
+	# Stop minikube
+	minikube -p "${NAME}" stop
+}
+
+delete_minikube()
+{
+	read -p "Are you sure you want to delete the cluster? [y/N] " -n1 -r ANSWER
+	echo
+
+	if [[ ${ANSWER} =~ ^[Yy]$ ]]; then
+		# Delete the minikube cluster
+		minikube -p "${NAME}" delete
+		rm -rf "${KEYDIR}"
+	fi
+}
+
 setup_minikube()
 {
 	# Start minikube
-	minikube -p ${NAME} start --driver=${DRIVER}
+	start_minikube
 
 	# Enable addons
 	for ADDON in ${ADDONS[@]}; do
-		minikube -p ${NAME} addons enable "${ADDON}"
+		minikube -p "${NAME}" addons enable "${ADDON}"
 	done
 
 	# Setup flannel
@@ -35,10 +59,12 @@ setup_minikube()
 	kubectl apply -f ${SRCDIR}/namespaces.yaml
 }
 
-setup_init()
+setup_networking()
 {
+	# Split IP by '.'
 	OLDIFS=${IFS}
-	IFS=.; set -- $(minikube -p ${NAME} ip)
+	IFS=.; set -- $(minikube -p "${NAME}" ip)
+	# Assign free range to MetalLB
 	if [ "${4}" -gt 127 ]; then
 		LB_RANGE="${1}.${2}.${3}.1-${1}.${2}.${3}.127"
 	else
@@ -64,7 +90,7 @@ setup_init()
 start_dashboard()
 {
 	# Show web dashboard url
-	minikube -p ${NAME} dashboard --url
+	minikube -p "${NAME}" dashboard --url
 }
 
 build_unit()
@@ -76,7 +102,7 @@ build_unit()
 build_units()
 {
 	# Use minikube docker-env
-	eval $(minikube -p ${NAME} docker-env)
+	eval $(minikube -p "${NAME}" docker-env)
 
 	# Build docker images
 	for UNIT in ${UNITS[@]}; do
@@ -128,10 +154,10 @@ Units:"
 		exit 1
 	fi
 	if printf '%s\n' ${UNITS[@]} | grep -q -P "^${1}\$"; then
-		eval $(minikube -p ${NAME} docker-env)
+		eval $(minikube -p "${NAME}" docker-env)
 		build_unit "${1}"
 		kubectl delete -f "${SRCDIR}/${1}/deployment.yaml" || :
-		kubectl apply -k srcs
+		kubectl apply -k "${SRCDIR}"
 	else
 		echo "${1} is not a valid unit!"
 		exit 1
@@ -141,43 +167,11 @@ Units:"
 setup()
 {
 	setup_minikube
+	setup_networking
 	build_units
 	build_certs
-	setup_init
-}
-
-start()
-{
-	# Start minikube
-	setup_minikube
-	setup_init
-
-	# Update units
-	build_units
-
-	# Apply kustomization
 	kubectl apply -k "${SRCDIR}"
-
-	# Start the Kubernetes dashboard
-	start_dashboard
-}
-
-stop()
-{
-	# Stop minikube
-	minikube -p ${NAME} stop
-}
-
-delete()
-{
-	read -p "Are you sure you want to delete the cluster? [y/N] " -n1 -r ANSWER
-	echo
-
-	if [[ ${ANSWER} =~ ^[Yy]$ ]]; then
-		# Delete the minikube cluster
-		minikube -p ${NAME} delete
-		rm -rf keys/
-	fi
+	echo "To open the Kubernetes dashboard, please run 'minikube -p \"${NAME}\" dashboard' in your terminal."
 }
 
 print_help()
@@ -189,20 +183,20 @@ Commands:
 	start		Start an existing cluster and apply changes
 	stop		Stop the running cluster
 	restart		Restart the running cluster
+	update		Update an unit's image
 	delete		Delete the cluster
 	dashboard	Show the Kubernetes dashboard
 	help		Show this help message
-	update		Update an unit's image
 
 If no argument is provided, 'setup' will be assumed."
 }
 
 case "${1}" in 
-  "setup" | ""	)	setup; start;;
-  "start"		)	start;;
-  "stop"		)	stop;;
-  "restart"		)	stop; start;;
-  "delete"		)	delete;;
+  "setup" | ""	)	setup;;
+  "start"		)	start_minikube;;
+  "stop"		)	stop_minikube;;
+  "restart"		)	stop_minikube; start_minikube;;
+  "delete"		)	delete_minikube;;
   "dashboard"	)	start_dashboard;;
   "update"		)	update_unit "${2}";;
   * 			)	print_help;;

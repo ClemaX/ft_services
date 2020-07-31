@@ -115,10 +115,10 @@ Commands:
         start           Start an existing cluster and apply changes
         stop            Stop the running cluster
         restart         Restart the running cluster
+		update          Update an unit's image
         delete          Delete the cluster
         dashboard       Show the Kubernetes dashboard
         help            Show this help message
-		update          Update an unit's image
 
 If no argument is provided, 'setup' will be assumed.
 ```
