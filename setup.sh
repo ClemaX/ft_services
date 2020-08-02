@@ -17,7 +17,7 @@ ADDONS=("metrics-server" "dashboard")
 start_minikube()
 {
 	# Start minikube
-	minikube -p "${NAME}" start --driver="${DRIVER}"
+	minikube -p "${NAME}" start --driver="${DRIVER}" --extra-config=kubeadm.pod-network-cidr=10.244.0.0/16
 }
 
 stop_minikube()
