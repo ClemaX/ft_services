@@ -7,6 +7,13 @@ export LD_PRELOAD=/usr/lib/preloadable_libiconv.so
 set -e
 set -o pipefail
 
+EXT_PORT=5050
+PROTOCOL=https
+
+CA_CERT=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+BEARER=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+STAT_URL=https://kubernetes/api/v1/namespaces/default/services/wordpress
+
 download_wordpress()
 {
 	echo "Downloading wordpress..."
@@ -50,6 +57,12 @@ create_users()
 	echo "Creating editor '${WP_EDITOR_USERNAME}'..."
 	wp --path=${WWW_DIR} user create ${WP_EDITOR_USERNAME} ${WP_EDITOR_EMAIL} --user_pass=${WP_EDITOR_PASSWORD} --role=editor
 }
+
+# Get external ip if WP_URL is not set
+if [[ -z "${WP_URL}" ]]; then
+	EXT_IP=$(curl --cacert "${CA_CERT}" -H "Authorization: Bearer ${BEARER}" "${STAT_URL}" | jq -r '.status.loadBalancer.ingress[0].ip')
+	WP_URL="${PROTOCOL}://${EXT_IP}:${EXT_PORT}"
+fi
 
 if wp --path=${WWW_DIR} core is-installed; then
 	config_wordpress

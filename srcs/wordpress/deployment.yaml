@@ -67,10 +67,6 @@ spec:
         app: wordpress
         tier: frontend
     spec:
-      hostAliases:
-      - ip: 127.0.0.1
-        hostnames:
-        - ft.services
       containers:
       - image: ft_services/wordpress
         imagePullPolicy: Never
@@ -89,8 +85,8 @@ spec:
         imagePullPolicy: Never
         name: init-wordpress
         env:
-        - name: WP_URL
-          value: https://ft.services:5050/ # This url should be set according to the LoadBalancer and hostname
+        #- name: WP_URL
+        #  value: https://ft.services:5050/ # This url should be set according to the hostname
         - name: WP_TITLE
           value: ft_services
         - name: WP_LOCALE
