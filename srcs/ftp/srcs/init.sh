@@ -14,7 +14,7 @@ adduser -D ${FTP_USERNAME} -h ${FTP_DIR}
 echo "${FTP_USERNAME}:${FTP_PASSWORD}" | chpasswd
 
 # Init FTP config
-EXT_IP=$(curl --cacert "$CA_CERT" -H "Authorization: Bearer $BEARER" "$STAT_URL" | jq -r '.status.loadBalancer.ingress[0].ip')
-echo "Setting PASV IP to $EXT_IP..."
-sed -i $FTP_CONF -e "s|EXT_IP|$EXT_IP|g" $FTP_CONF
+EXT_IP=$(curl --cacert "${CA_CERT}" -H "Authorization: Bearer ${BEARER}" "${STAT_URL}" | jq -r '.status.loadBalancer.ingress[0].ip')
+echo "Setting PASV IP to '${EXT_IP}'..."
+sed -i "${FTP_CONF}" -e "s|EXT_IP|${EXT_IP}|g" "${FTP_CONF}"
 echo "Done!"
