@@ -1,5 +1,8 @@
 FROM alpine
 
+# Wordpress Language and Region
+ENV WP_LOCALE=en_US
+
 ENV WWW_USER=www-data
 ENV WWW_DIR=/var/www/wordpress
 
@@ -23,6 +26,10 @@ RUN apk add --update --no-cache curl jq nginx php7 php7-fpm php7-json php7-zlib 
 
 # Install wp-cli
 RUN wget -qO /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x /usr/local/bin/wp
+
+# Download Wordpress
+RUN wp --path=/wordpress core download --locale=${WP_LOCALE}\
+	&& cp /wordpress/wp-config-sample.php /wordpress/wp-config.php
 
 # Setup WWW user
 RUN adduser -D -G${WWW_USER} ${WWW_USER}\

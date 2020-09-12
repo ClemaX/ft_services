@@ -68,7 +68,7 @@ if wp --path=${WWW_DIR} core is-installed; then
 	config_wordpress
 	config_wordpress_postinstall
 else
-	download_wordpress
+	cp -R /wordpress/* ${WWW_DIR}
 	config_wordpress
 	install_wordpress
 	config_wordpress_postinstall
