@@ -20,6 +20,9 @@ RUN apk add --update --no-cache mysql-client nginx php7-fpm php7-mbstring php7-c
 	php7-json php7-gd php7-curl php7-xml php7-mysqli php7-imap php7-pdo php7-pdo_mysql\
 	php7-soap php7-xmlrpc php7-posix php7-mcrypt php7-gettext php7-ldap php7-ctype php7-dom
 
+# Download phpMyAdmin
+RUN wget -qO /phpmyadmin.zip "https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_version}/phpMyAdmin-${phpmyadmin_version}-all-languages.zip"
+
 # Setup WWW user
 RUN adduser -D -G${WWW_USER} ${WWW_USER}\
 	&& chown -R ${WWW_USER}:${WWW_USER} /var/lib/nginx\

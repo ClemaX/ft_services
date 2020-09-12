@@ -5,12 +5,10 @@ set -e
 
 install_phpmyadmin()
 {
-	echo "Downloading phpMyAdmin..."
-    wget -qO /tmp/phpmyadmin.zip https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_version}/phpMyAdmin-${phpmyadmin_version}-all-languages.zip
+	echo "Installing phpMyAdmin..."
     cd /tmp
-    unzip phpmyadmin.zip
-    rm -f phpmyadmin.zip
-    mv phpMyAdmin-${phpmyadmin_version}-all-languages/* /usr/share/phpmyadmin/
+    unzip -q /phpmyadmin.zip
+    mv "phpMyAdmin-${phpmyadmin_version}-all-languages/" /usr/share/phpmyadmin/
 }
 
 setup_phpmyadmin()
