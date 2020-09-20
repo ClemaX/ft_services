@@ -79,6 +79,12 @@ spec:
         - name: tls
           mountPath: /etc/nginx/certs
           readOnly: true
+        livenessProbe:
+          tcpSocket:
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          failureThreshold: 8
       initContainers:
       - image: ft_services/phpmyadmin
         imagePullPolicy: Never
