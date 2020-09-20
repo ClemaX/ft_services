@@ -124,6 +124,12 @@ spec:
           - name: tls
             mountPath: /etc/grafana/certs
             readOnly: true
+        livenessProbe:
+          tcpSocket:
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          failureThreshold: 8
       initContainers:
       - name: init-grafana
         image: ft_services/grafana
