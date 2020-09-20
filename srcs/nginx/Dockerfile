@@ -19,6 +19,7 @@ COPY srcs/nginx/nginx.conf /etc/nginx/nginx.conf
 RUN ssh-keygen -A
 
 COPY srcs/init.sh /init.sh
+COPY srcs/liveness.sh /liveness.sh
 
 EXPOSE 80 22
 

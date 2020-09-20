@@ -60,6 +60,13 @@ spec:
         - name: tls
           mountPath: /etc/nginx/certs
           readOnly: true
+        livenessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - /liveness.sh
+          initialDelaySeconds: 15
+          timeoutSeconds: 10
       volumes:
       - name: tls
         secret:
