@@ -84,6 +84,12 @@ spec:
           ports:
             - name: influxdb
               containerPort: 8086
+          livenessProbe:
+            tcpSocket:
+              port: 8086
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 8
       initContainers:
         - name: init-influxdb
           image: ft_services/influxdb

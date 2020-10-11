@@ -80,6 +80,12 @@ spec:
         - name: tls
           mountPath: /etc/nginx/certs
           readOnly: true
+        livenessProbe:
+          tcpSocket:
+            port: 5050
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          failureThreshold: 8
       initContainers:
       - image: ft_services/wordpress
         imagePullPolicy: Never

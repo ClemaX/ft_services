@@ -111,6 +111,12 @@ spec:
         - name: ftp-tls
           mountPath: /etc/vsftpd/tls
           readOnly: true
+        livenessProbe:
+          tcpSocket:
+            port: 21
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          failureThreshold: 8
       volumes:
       - name: ftp-persistent-storage
         persistentVolumeClaim:
