@@ -7,8 +7,8 @@ ENV WWW_DIR=/var/www/localhost
 RUN apk add --update --no-cache nginx openssh
 
 # Setup WWW user with home at WWW dir
-RUN adduser -D -h${WWW_DIR} -G${WWW_USER} ${WWW_USER}\
-	&& chown -R ${WWW_USER}:${WWW_USER} /var/lib/nginx
+RUN adduser -D -h"${WWW_DIR}" -G"${WWW_USER}" "${WWW_USER}"\
+	&& chown -R "${WWW_USER}:${WWW_USER}" /var/lib/nginx
 
 # Setup Nginx config
 RUN rm /etc/nginx/conf.d/default.conf
@@ -19,6 +19,9 @@ COPY srcs/nginx/nginx.conf /etc/nginx/nginx.conf
 RUN ssh-keygen -A
 
 COPY srcs/init.sh /init.sh
+
+# Set index
+COPY srcs/index.html "${WWW_DIR}"
 
 EXPOSE 80 22
 
