@@ -24,10 +24,10 @@ secretGenerator:
     literals:
       - username=www-data
       - password=42nginx
-  - name: ftp-secret
+  - name: ftps-secret
     literals:
       - username=admin
-      - password=42ftp
+      - password=42ftps
   - name: influxdb-database
     namespace: monitoring
     literals:
@@ -55,4 +55,4 @@ resources:
   - wordpress/deployment.yaml
   - phpmyadmin/deployment.yaml
   - nginx/deployment.yaml
-  - ftp/deployment.yaml
+  - ftps/deployment.yaml

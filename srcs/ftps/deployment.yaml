@@ -1,25 +1,25 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ftp
+  name: ftps
   labels:
     app: ftps
 spec:
   type: LoadBalancer
   ports:
-    - name: ftp-cmd
+    - name: ftps-cmd
       protocol: TCP
       port: 21
-    - name: ftp-pasv-0
+    - name: ftps-pasv-0
       protocol: TCP
       port: 1024
-    - name: ftp-pasv-1
+    - name: ftps-pasv-1
       protocol: TCP
       port: 1025
-    - name: ftp-pasv-2
+    - name: ftps-pasv-2
       protocol: TCP
       port: 1026
-    - name: ftp-pasv-3
+    - name: ftps-pasv-3
       protocol: TCP
       port: 1027
   selector:
@@ -29,7 +29,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: ftp-pv
+  name: ftps-pv
   labels:
     type: local
 spec:
@@ -43,12 +43,12 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   claimRef:
     namespace: default
-    name: ftp-pv-claim
+    name: ftps-pv-claim
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ftp-pv-claim
+  name: ftps-pv-claim
   labels:
     app: ftps
 spec:
@@ -58,12 +58,12 @@ spec:
   resources:
     requests:
       storage: 128Mi
-  volumeName: ftp-pv
+  volumeName: ftps-pv
 ---
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: ftp
+  name: ftps
   labels:
     app: ftps
 spec:
@@ -80,47 +80,47 @@ spec:
         tier: ftp
     spec:
       containers:
-      - image: ft_services/ftp
+      - image: ft_services/ftps
         imagePullPolicy: Never
-        name: ftp
+        name: ftps
         env:
         - name: FTP_USERNAME
           valueFrom:
             secretKeyRef:
-              name: ftp-secret
+              name: ftps-secret
               key: username
         - name: FTP_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: ftp-secret
+              name: ftps-secret
               key: password
         ports:
-        - name: ftp-cmd
+        - name: ftps-cmd
           containerPort: 21
-        - name: ftp-pasv-0
+        - name: ftps-pasv-0
           containerPort: 1024
-        - name: ftp-pasv-1
+        - name: ftps-pasv-1
           containerPort: 1025
-        - name: ftp-pasv-2
+        - name: ftps-pasv-2
           containerPort: 1026
-        - name: ftp-pasv-3
+        - name: ftps-pasv-3
           containerPort: 1027
         volumeMounts:
-        - name: ftp-persistent-storage
+        - name: ftps-persistent-storage
           mountPath: /var/ftp
-        - name: ftp-tls
+        - name: ftps-tls
           mountPath: /etc/vsftpd/tls
           readOnly: true
         livenessProbe:
           tcpSocket:
             port: 21
-          initialDelaySeconds: 15
+          initialDelaySeconds: 60
           periodSeconds: 20
           failureThreshold: 8
       volumes:
-      - name: ftp-persistent-storage
+      - name: ftps-persistent-storage
         persistentVolumeClaim:
-          claimName: ftp-pv-claim
-      - name: ftp-tls
+          claimName: ftps-pv-claim
+      - name: ftps-tls
         secret:
           secretName: default-tls
