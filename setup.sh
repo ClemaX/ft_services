@@ -11,7 +11,7 @@ KEYDIR=keys         # Directory where keys and certs will be stored
 KEYHOST=ft.services # Load balancer hostname
 
 # Container units
-UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftp" "influxdb" "grafana" "telegraf")
+UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps" "influxdb" "grafana" "telegraf")
 ADDONS=("metrics-server" "dashboard")
 
 start_minikube()
@@ -64,9 +64,9 @@ setup_networking()
 	IFS=.; set --  $(kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
 	# Assign free range to MetalLB
 	if [ "${4}" -gt 127 ]; then
-		LB_RANGE="${1}.${2}.${3}.1-${1}.${2}.${3}.127"
+		LB_RANGE="${1}.${2}.${3}.1-${1}.${2}.${3}.1"
 	else
-		LB_RANGE="${1}.${2}.${3}.129-${1}.${2}.${3}.254"
+		LB_RANGE="${1}.${2}.${3}.129-${1}.${2}.${3}.129"
 	fi
 	# Restore IFS
 	IFS=${OLDIFS}
