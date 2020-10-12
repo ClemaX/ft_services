@@ -78,9 +78,6 @@ spec:
         volumeMounts:
         - name: phpmyadmin-persistent-storage
           mountPath: /usr/share/phpmyadmin
-        - name: tls
-          mountPath: /etc/nginx/certs
-          readOnly: true
         livenessProbe:
           tcpSocket:
             port: 5000
@@ -113,6 +110,3 @@ spec:
         - name: phpmyadmin-persistent-storage
           persistentVolumeClaim:
             claimName: php-pv-claim
-        - name: tls
-          secret:
-            secretName: default-tls
