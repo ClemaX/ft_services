@@ -60,7 +60,8 @@ setup_networking()
 {
 	# Split IP by '.'
 	OLDIFS=${IFS}
-	IFS=.; set -- $(minikube -p "${NAME}" ip)
+	# $(minikube -p "${NAME}" ip)
+	IFS=.; set --  $(kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
 	# Assign free range to MetalLB
 	if [ "${4}" -gt 127 ]; then
 		LB_RANGE="${1}.${2}.${3}.1-${1}.${2}.${3}.127"
