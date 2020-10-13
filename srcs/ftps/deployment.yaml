@@ -28,40 +28,6 @@ spec:
     app: ftps
     tier: ftp
 ---
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: ftps-pv
-  labels:
-    type: local
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 128Mi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/ftp"
-  persistentVolumeReclaimPolicy: Retain
-  claimRef:
-    namespace: default
-    name: ftps-pv-claim
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ftps-pv-claim
-  labels:
-    app: ftps
-spec:
-  storageClassName: manual
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 128Mi
-  volumeName: ftps-pv
----
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -108,8 +74,6 @@ spec:
         - name: ftps-pasv-3
           containerPort: 1027
         volumeMounts:
-        - name: ftps-persistent-storage
-          mountPath: /var/ftp
         - name: ftps-tls
           mountPath: /etc/vsftpd/tls
           readOnly: true
@@ -120,9 +84,6 @@ spec:
           periodSeconds: 20
           failureThreshold: 8
       volumes:
-      - name: ftps-persistent-storage
-        persistentVolumeClaim:
-          claimName: ftps-pv-claim
       - name: ftps-tls
         secret:
           secretName: default-tls
