@@ -14,6 +14,13 @@ KEYHOST=ft.services # Load balancer hostname
 UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps" "influxdb" "grafana" "telegraf")
 ADDONS=("metrics-server" "dashboard")
 
+element_in () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
 start_minikube()
 {
 	# Start minikube
@@ -151,7 +158,7 @@ Units:"
 		printf '	%s\n' ${UNITS[@]}
 		exit 1
 	fi
-	if printf '%s\n' ${UNITS[@]} | grep -q -P "^${1}\$"; then
+	if element_in "${1}" "${UNITS[@]}"; then
 		eval $(minikube -p "${NAME}" docker-env)
 		build_unit "${1}"
 		kubectl delete -f "${SRCDIR}/${1}/deployment.yaml" || :
