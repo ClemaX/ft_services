@@ -116,7 +116,7 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 21
-          initialDelaySeconds: 60
+          initialDelaySeconds: 15
           periodSeconds: 20
           failureThreshold: 8
       volumes:
