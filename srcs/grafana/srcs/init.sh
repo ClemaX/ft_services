@@ -13,8 +13,8 @@ update()
 	apply_conf /dashboards.yaml "${GRAFANA_DIR}/conf/provisioning/dashboards/dashboards.yaml"
 	cd dashboards
 	for DASHBOARD in *; do
-		sed -i "$DASHBOARD" -e "s|\${DS_INFLUXK8S}|${DS_INFLUXK8S}|g"
-		apply_conf "$DASHBOARD" "${GRAFANA_DIR}/data/dashboards/$DASHBOARD"
+		sed -i "${DASHBOARD}" -e "s|\${DS_INFLUXK8S}|${DS_INFLUXK8S}|g"
+		apply_conf "${DASHBOARD}" "${GRAFANA_DIR}/data/dashboards/${DASHBOARD}"
 	done
 }
 
@@ -30,7 +30,7 @@ else
 	mkdir -p "${GRAFANA_DIR}/conf/provisioning/plugins"
 	mkdir -p "${GRAFANA_DIR}/data/logs"
 	mkdir -p "${GRAFANA_DIR}/data/dashboards"
-	ln -s /usr/share/grafana/public ${GRAFANA_DIR}/public
+	ln -s /usr/share/grafana/public "${GRAFANA_DIR}/public"
 	update
 fi
 echo "Done!"
