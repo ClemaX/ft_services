@@ -17,3 +17,5 @@ COPY srcs/entrypoint.sh /entrypoint.sh
 EXPOSE 21 1024-1027
 
 ENTRYPOINT [ "/sbin/tini", "--", "/entrypoint.sh"]
+
+CMD [ "vsftpd", "${FTP_CONF}" ]

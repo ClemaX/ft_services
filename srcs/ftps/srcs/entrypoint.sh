@@ -21,5 +21,4 @@ EXT_IP="$(echo "${STAT_DATA}" | jq -r '.status.loadBalancer.ingress[0].ip')"
 echo "Setting PASV IP to '${EXT_IP}'..."
 sed -i "${FTP_CONF}" -e "s|EXT_IP|${EXT_IP}|g" "${FTP_CONF}"
 
-echo "Launching vsftpd..."
-vsftpd /etc/vsftpd/vsftpd.conf
+exec $(eval echo "${@}")
