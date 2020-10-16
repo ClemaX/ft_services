@@ -95,7 +95,7 @@ spec:
         - name: WP_TITLE
           value: ft_services
         - name: MYSQL_HOST
-          value: wordpress-mysql
+          value: mysql
         - name: MYSQL_WP_DATABASE
           valueFrom:
             secretKeyRef:
