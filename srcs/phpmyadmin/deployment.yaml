@@ -15,41 +15,7 @@ spec:
     app: wordpress
     tier: frontend
 ---
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: php-pv
-  labels:
-    type: local
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 128Mi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/php"
-  persistentVolumeReclaimPolicy: Retain
-  claimRef:
-    namespace: default
-    name: php-pv-claim
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: php-pv-claim
-  labels:
-    app: wordpress
-spec:
-  storageClassName: manual
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 128Mi
-  volumeName: php-pv
----
-apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: phpmyadmin
@@ -75,38 +41,15 @@ spec:
         ports:
         - containerPort: 5000
           name: phpmyadmin
-        volumeMounts:
-        - name: phpmyadmin-persistent-storage
-          mountPath: /usr/share/phpmyadmin
         livenessProbe:
           tcpSocket:
             port: 5000
           initialDelaySeconds: 15
           periodSeconds: 20
           failureThreshold: 8
-      initContainers:
-      - image: ft_services/phpmyadmin
-        imagePullPolicy: Never
-        name: init-phpmyadmin
         env:
-        - name: MYSQL_HOST
-          value: wordpress-mysql
-        - name: MYSQL_USERNAME
+        - name: PMA_BLOWFISH
           valueFrom:
             secretKeyRef:
-              name: mysql-secret
-              key: php-username
-        - name: MYSQL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: php-password
-        volumeMounts:
-        - name: phpmyadmin-persistent-storage
-          mountPath: /usr/share/phpmyadmin
-        command: ['/bin/sh']
-        args: ['/init.sh']
-      volumes:
-        - name: phpmyadmin-persistent-storage
-          persistentVolumeClaim:
-            claimName: php-pv-claim
+              name: pma-secret
+              key: blowfish

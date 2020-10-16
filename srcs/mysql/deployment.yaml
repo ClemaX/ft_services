@@ -106,21 +106,20 @@ spec:
             secretKeyRef:
               name: mysql-secret
               key: wp-password
-        - name: MYSQL_PHP_USERNAME
+        - name: MYSQL_PMA_USERNAME
           valueFrom:
             secretKeyRef:
               name: mysql-secret
-              key: php-username
-        - name: MYSQL_PHP_PASSWORD
+              key: pma-username
+        - name: MYSQL_PMA_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-secret
-              key: php-password
+              key: pma-password
         volumeMounts:
         - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
-        command: ['/bin/sh']
-        args: ['/init.sh']
+        args: [""]
       volumes:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
