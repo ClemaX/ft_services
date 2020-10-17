@@ -7,6 +7,8 @@ NAME=ft.services	# Minikube profile
 PREFIX=ft_services  # Docker build prefix
 SRCDIR=srcs         # Directory which contains the deployments
 
+RETRY=5				# Maximum number of tries to start minikube
+
 KEYDIR=keys         # Directory where keys and certs will be stored
 KEYHOST=ft.services # Load balancer hostname
 
@@ -24,7 +26,17 @@ element_in () {
 start_minikube()
 {
 	# Start minikube
-	minikube -p "${NAME}" start --driver="${DRIVER}" --extra-config=kubeadm.pod-network-cidr=10.244.0.0/16
+	local n=0
+	until [ "${n}" -ge "${RETRY}" ]; do
+		minikube -p "${NAME}" start "--driver=${DRIVER}" --extra-config=kubeadm.pod-network-cidr=10.244.0.0/16 && break
+		n=$((n+1))
+		sleep 2
+	done
+
+	if [ "${n}" -eq "${RETRY}" ]; then
+		echo "Failed to start minikube after ${RETRY} tries!"
+		exit 1
+	fi
 }
 
 stop_minikube()
@@ -60,7 +72,7 @@ setup_minikube()
 	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
 
 	# Setup namespaces
-	kubectl apply -f ${SRCDIR}/namespaces.yaml
+	kubectl apply -f "${SRCDIR}/namespaces.yaml"
 }
 
 setup_networking()
