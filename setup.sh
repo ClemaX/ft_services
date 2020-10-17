@@ -28,7 +28,7 @@ start_minikube()
 	# Start minikube
 	local n=0
 	until [ "${n}" -ge "${RETRY}" ]; do
-		minikube -p "${NAME}" start "--driver=${DRIVER}" --extra-config=kubeadm.pod-network-cidr=10.244.0.0/16 && break
+		minikube -p "${NAME}" start "--driver=${DRIVER}" && break
 		n=$((n+1))
 		sleep 2
 	done
