@@ -2,7 +2,12 @@
 
 set -e              # Abort on error
 
-DRIVER=${DRIVER:-docker}	# Driver to use with minikube
+case "${OSTYPE}" in
+	darwin*	)	DEFAULT_DRIVER="virtualbox";; 
+	*		)	DEFAULT_DRIVER="docker";;
+esac
+
+DRIVER="${DRIVER:-${DEFAULT_DRIVER}}"	# Driver to use with minikube
 NAME=ft.services	# Minikube profile
 PREFIX=ft_services  # Docker build prefix
 SRCDIR=srcs         # Directory which contains the deployments
@@ -208,12 +213,12 @@ If no argument is provided, 'setup' will be assumed."
 }
 
 case "${1}" in 
-  "setup" | ""	)	setup;;
-  "start"		)	start_minikube;;
-  "stop"		)	stop_minikube;;
-  "restart"		)	stop_minikube; start_minikube;;
-  "delete"		)	delete_minikube;;
-  "dashboard"	)	start_dashboard;;
-  "update"		)	update_unit "${2}";;
-  * 			)	print_help;;
+	"setup" | "")	setup;;
+	"start"		)	start_minikube;;
+	"stop"		)	stop_minikube;;
+	"restart"	)	stop_minikube; start_minikube;;
+	"delete"	)	delete_minikube;;
+	"dashboard"	)	start_dashboard;;
+	"update"	)	update_unit "${2}";;
+	*			)	print_help;;
 esac
