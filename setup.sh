@@ -17,9 +17,9 @@ UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps" "influxdb" "grafana" "tel
 ADDONS=("metrics-server" "dashboard")
 
 element_in () {
-  local e match="$1"
+  local e match="${1}"
   shift
-  for e; do [[ "$e" == "$match" ]] && return 0; done
+  for e; do [[ "${e}" == "${match}" ]] && return 0; done
   return 1
 }
 
