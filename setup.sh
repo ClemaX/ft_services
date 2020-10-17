@@ -71,9 +71,9 @@ setup_networking()
 	IFS=.; set --  $(kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
 	# Assign free range to MetalLB
 	if [ "${4}" -gt 127 ]; then
-		LB_RANGE="${1}.${2}.${3}.1-${1}.${2}.${3}.1"
+		LB_RANGE="${1}.${2}.${3}.1/32"
 	else
-		LB_RANGE="${1}.${2}.${3}.129-${1}.${2}.${3}.129"
+		LB_RANGE="${1}.${2}.${3}.128/32"
 	fi
 	# Restore IFS
 	IFS=${OLDIFS}
