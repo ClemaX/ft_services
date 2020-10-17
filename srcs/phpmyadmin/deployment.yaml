@@ -13,7 +13,7 @@ spec:
       port: 5000
   selector:
     app: wordpress
-    tier: frontend
+    tier: phpmyadmin
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -25,14 +25,14 @@ spec:
   selector:
     matchLabels:
       app: wordpress
-      tier: frontend
+      tier: phpmyadmin
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         app: wordpress
-        tier: frontend
+        tier: phpmyadmin
     spec:
       containers:
       - image: ft_services/phpmyadmin
