@@ -1,7 +1,7 @@
 FROM alpine
 
-ENV WWW_USER=www-data
-ENV WWW_DIR=/var/www/localhost
+ENV WWW_USER="www-data"
+ENV WWW_DIR="/var/www/localhost"
 
 # Install dependencies
 RUN apk add --update --no-cache nginx openssh
