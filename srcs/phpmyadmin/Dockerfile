@@ -4,7 +4,7 @@ FROM alpine
 ENV MYSQL_HOST="mysql"
 
 # PMA Settings
-ARG PMA_VERSION="5.0.1"
+ARG PMA_VERSION="5.0.4"
 
 ENV PMA_FILENAME="phpMyAdmin-${PMA_VERSION}-all-languages"
 ENV	PMA_URL="https://files.phpmyadmin.net/phpMyAdmin/${PMA_VERSION}/${PMA_FILENAME}.zip"
