@@ -48,6 +48,8 @@ spec:
           periodSeconds: 20
           failureThreshold: 8
         env:
+        - name: MYSQL_HOST
+          value: mysql
         - name: PMA_BLOWFISH
           valueFrom:
             secretKeyRef:
