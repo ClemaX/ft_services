@@ -97,12 +97,6 @@ spec:
               secretKeyRef:
                 name: grafana-secretkey
                 key: secretkey
-          - name: GF_SERVER_PROTOCOL
-            value: https
-          - name: GF_SERVER_CERT_FILE
-            value: /etc/grafana/certs/tls.crt
-          - name: GF_SERVER_CERT_KEY
-            value: /etc/grafana/certs/tls.key
           - name: INFLUXDB_URL
             value: http://influxdb:8086
           - name: INFLUXDB_DATABASE
