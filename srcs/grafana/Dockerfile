@@ -17,17 +17,14 @@ ENV GRAFANA_DIR=/var/lib/grafana
 # ENV GF_SECURITY_ADMIN_PASSWORD=admin
 
 # TLS
-# ENV GF_SERVER_PROTOCOL=https
+# ENV GF_SERVER_PROTOCOL=http
 # ENV GF_SERVER_CERT_FILE=tls.crt
 # ENV GF_SERVER_CERT_KEY=tls.key
 
 # Install dependencies
 RUN apk add --update --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted grafana
 
-COPY srcs/defaults.ini /defaults.ini
-COPY srcs/datasources.yaml /datasources.yaml
-COPY srcs/dashboards.yaml /dashboards.yaml
-COPY srcs/dashboards /dashboards
+COPY srcs/grafana /grafana
 COPY srcs/init.sh /init.sh
 
-CMD grafana-server --homepath ${GRAFANA_DIR}
+CMD grafana-server --homepath "${GRAFANA_DIR}"

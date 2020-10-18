@@ -3,14 +3,15 @@ set -e
 
 apply_conf()
 {
-	diff $1 $2 || (cp -ar $1 $2 && echo "Updated $2!")
+	diff "${1}" "${2}" || (cp -ar "${1}" "${2}" && echo "Updated '${2}'!")
 }
 
 update()
 {
-	apply_conf /defaults.ini "${GRAFANA_DIR}/conf/defaults.ini"
-	apply_conf /datasources.yaml "${GRAFANA_DIR}/conf/provisioning/datasources/datasources.yaml"
-	apply_conf /dashboards.yaml "${GRAFANA_DIR}/conf/provisioning/dashboards/dashboards.yaml"
+	cd grafana
+	apply_conf defaults.ini "${GRAFANA_DIR}/conf/defaults.ini"
+	apply_conf datasources.yaml "${GRAFANA_DIR}/conf/provisioning/datasources/datasources.yaml"
+	apply_conf dashboards.yaml "${GRAFANA_DIR}/conf/provisioning/dashboards/dashboards.yaml"
 	cd dashboards
 	for DASHBOARD in *; do
 		sed -i "${DASHBOARD}" -e "s|\${DS_INFLUXK8S}|${DS_INFLUXK8S}|g"
