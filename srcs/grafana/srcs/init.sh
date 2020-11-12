@@ -24,7 +24,7 @@ if [ -d "${GRAFANA_DIR}/conf" ]; then
     echo "Updating existing config..."
 	update
 else
-	echo "Creating config..."
+	echo "Installing to '${GRAFANA_DIR}'..."
 	mkdir -p "${GRAFANA_DIR}/conf/provisioning/dashboards"
 	mkdir -p "${GRAFANA_DIR}/conf/provisioning/datasources"
 	mkdir -p "${GRAFANA_DIR}/conf/provisioning/notifiers"
