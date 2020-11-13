@@ -62,6 +62,7 @@ RUN sed -i /etc/php7/php-fpm.d/www.conf -e "s|;listen.owner\s*=\s*nobody|listen.
 	-e "s|;log_level\s*=\s*notice|log_level = notice|g" /etc/php7/php-fpm.d/www.conf
 
 COPY srcs/entrypoint.sh /entrypoint.sh
+COPY srcs/liveness.sh /liveness.sh
 
 EXPOSE 5000
 
