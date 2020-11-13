@@ -44,9 +44,8 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 5000
-          initialDelaySeconds: 15
-          periodSeconds: 20
-          failureThreshold: 8
+          initialDelaySeconds: 45
+          timeoutSeconds: 3
         env:
         - name: MYSQL_HOST
           value: mysql

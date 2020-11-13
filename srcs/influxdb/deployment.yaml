@@ -89,9 +89,8 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 8086
-            initialDelaySeconds: 15
-            periodSeconds: 20
-            failureThreshold: 8
+            initialDelaySeconds: 45
+            timeoutSeconds: 3
       initContainers:
         - name: init-influxdb
           image: ft_services/influxdb

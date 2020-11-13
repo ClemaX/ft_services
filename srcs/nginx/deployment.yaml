@@ -67,8 +67,8 @@ spec:
             command:
               - /bin/sh
               - /liveness.sh
-          initialDelaySeconds: 15
-          timeoutSeconds: 10
+          initialDelaySeconds: 45
+          timeoutSeconds: 3
       volumes:
       - name: tls
         secret:

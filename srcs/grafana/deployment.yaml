@@ -123,9 +123,8 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 3000
-          initialDelaySeconds: 15
-          periodSeconds: 20
-          failureThreshold: 8
+          initialDelaySeconds: 45
+          timeoutSeconds: 3
       initContainers:
       - name: init-grafana
         image: ft_services/grafana
