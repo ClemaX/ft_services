@@ -8,7 +8,7 @@ set -e
 set -o pipefail
 
 EXT_PORT=5050
-PROTOCOL=https
+PROTOCOL=http
 
 CA_CERT="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 BEARER="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
