@@ -3,7 +3,7 @@
 set -e              # Abort on error
 
 case "${OSTYPE}" in
-	darwin*	)	DEFAULT_DRIVER="virtualbox";; 
+	darwin*	)	DEFAULT_DRIVER="virtualbox";;
 	*		)	DEFAULT_DRIVER="docker";;
 esac
 
@@ -18,7 +18,8 @@ KEYDIR=keys         # Directory where keys and certs will be stored
 KEYHOST=ft.services # Load balancer hostname
 
 # Container units
-UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps" "influxdb" "grafana" "telegraf")
+DAEMONSETS=("telegraf")
+UNITS=("mysql" "wordpress" "phpmyadmin" "nginx" "ftps" "influxdb" "grafana" "${DAEMONSETS[@]}")
 ADDONS=("metrics-server" "dashboard")
 
 element_in () {
@@ -117,7 +118,7 @@ start_dashboard()
 build_unit()
 {
 	echo "Building ${1}..."
-	docker build -qt "${PREFIX}/${1}" "${SRCDIR}/${1}" 
+	docker build -qt "${PREFIX}/${1}" "${SRCDIR}/${1}"
 }
 
 build_units()
@@ -185,6 +186,36 @@ Units:"
 	fi
 }
 
+kill_unit_process()
+{
+	if [[ "${1}" = "" || "${2}" = "" ]]; then
+		echo -e "Usage: ${0} kill [UNIT] [PROCESS]
+
+Units:"
+		printf '	%s\n' ${UNITS[@]}
+		exit 1
+	fi
+	if element_in "${1}" "${DAEMONSETS[@]}"; then
+		CONTAINER="$(minikube -p "${NAME}" ssh -- docker ps -qf "name=^/k8s_${1}" | tr -d '\r')"
+
+		echo "Killing '${2}' running in '${CONTAINER}' on minikube node..."
+
+		minikube -p "${NAME}" ssh -- docker exec -it "${CONTAINER}" pkill "${2}"
+	elif element_in "${1}" "${UNITS[@]}"; then
+		PODSPEC=($(kubectl get pod -o custom-columns=:metadata.name,:metadata.namespace --all-namespaces | grep "${1}"))
+		POD="${PODSPEC[0]}"
+		NAMESPACE="${PODSPEC[1]}"
+
+		echo "Killing '${2}' running in '${POD}' on namespace '${NAMESPACE}'..."
+
+		kubectl exec -n "${NAMESPACE}" -it "${POD}" -- pkill "${2}"
+	else
+		echo "${1} is not a valid unit!"
+		exit 1
+	fi
+	echo "Done!"
+}
+
 setup()
 {
 	setup_minikube
@@ -208,11 +239,12 @@ Commands:
 	delete		Delete the cluster
 	dashboard	Show the Kubernetes dashboard
 	help		Show this help message
+	kill		Kill an unit's process
 
 If no argument is provided, 'setup' will be assumed."
 }
 
-case "${1}" in 
+case "${1}" in
 	"setup" | "")	setup;;
 	"start"		)	start_minikube;;
 	"stop"		)	stop_minikube;;
@@ -220,5 +252,6 @@ case "${1}" in
 	"delete"	)	delete_minikube;;
 	"dashboard"	)	start_dashboard;;
 	"update"	)	update_unit "${2}";;
+	"kill"		)	kill_unit_process "${2}" "${3}";;
 	*			)	print_help;;
 esac

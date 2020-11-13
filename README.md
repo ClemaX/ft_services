@@ -119,6 +119,7 @@ Commands:
         delete          Delete the cluster
         dashboard       Show the Kubernetes dashboard
         help            Show this help message
+        kill            Kill an unit's process
 
 If no argument is provided, 'setup' will be assumed.
 ```
