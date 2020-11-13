@@ -80,8 +80,10 @@ spec:
         - name: wordpress-persistent-storage
           mountPath: /var/www/wordpress
         livenessProbe:
-          tcpSocket:
-            port: 5050
+          exec:
+            command:
+              - /bin/sh
+              - /liveness.sh
           initialDelaySeconds: 45
           timeoutSeconds: 3
       initContainers:

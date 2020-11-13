@@ -51,6 +51,7 @@ COPY srcs/nginx/wordpress.conf /etc/nginx/conf.d/wordpress.conf
 COPY srcs/nginx/nginx.conf /etc/nginx/nginx.conf
 
 COPY srcs/init.sh /init.sh
+COPY srcs/liveness.sh /liveness.sh
 
 EXPOSE 5050
 
